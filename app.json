@@ -1,0 +1,16 @@
+{
+  "expo": {
+    "name": "SaludWEB",
+    "slug": "saludweb-mobile",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": false,
+    "android": {
+      "package": "com.saludweb.mobile"
+    },
+    "ios": {
+      "bundleIdentifier": "com.saludweb.mobile"
+    }
+  }
+}

@@ -1,0 +1,22 @@
+# Dependencias instaladas con npm (no se suben al repositorio)
+node_modules/
+
+# Salida de builds de Expo
+dist/
+web-build/
+
+# Estado interno de Expo (no es código fuente)
+.expo/
+
+# Logs y archivos de sistema
+npm-debug.log*
+yarn-error.log*
+*.log
+
+# Token/Credenciales locales
+.env
+.env.local
+
+# IDE
+.vscode/
+.idea/
