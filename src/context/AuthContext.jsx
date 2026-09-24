@@ -109,6 +109,25 @@ export function AuthProvider({ children }) {
     setDesbloqueado(true);
   };
 
+  // Inicia sesión con SSO (Google / Microsoft).
+  // El id_token lo obtiene la pantalla de Login tras el flujo del proveedor;
+  // acá se lo entrega al backend, que verifica la firma y emite el JWT propio.
+  const loginSSO = async (provider, idToken) => {
+    // POST /api/auth/sso con el proveedor y el id_token del proveedor.
+    const datos = await api('/auth/sso', {
+      method: 'POST',
+      body: { provider, id_token: idToken },
+    });
+    // Idéntico al login clásico: se guarda el token en memoria y en el teléfono.
+    setToken(datos.token);
+    await AsyncStorage.setItem(TOKEN_KEY, datos.token);
+    // Se activa el estado de sesión con los datos del usuario.
+    setTokenState(datos.token);
+    setUsuario({ email: datos.email, nombre: datos.nombre, tipo_usuario: datos.tipo_usuario, id: datos.id });
+    // SSO exitoso también desbloquea la sesión actual.
+    setDesbloqueado(true);
+  };
+
   // Activa/desactiva la preferencia "Proteger con huella" (persistida).
   const toggleBioPreferido = async (nuevo) => {
     // Se persiste la preferencia en el teléfono para la próxima apertura.
@@ -141,6 +160,7 @@ export function AuthProvider({ children }) {
     bioPreferido,
     desbloqueado,
     login,
+    loginSSO,       // Inicia sesión con SSO (Google / Microsoft) usando el id_token.
     logout,
     desbloquear, //     Marca la sesión como desbloqueada (tras validar biometría).
     toggleBioPreferido, // Cambia la preferencia "Proteger con huella".

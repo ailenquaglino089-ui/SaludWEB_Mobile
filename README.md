@@ -30,7 +30,13 @@ aplicada y comentada **línea por línea** en `GUIA_MOBILE.md`.
   la próxima apertura restaura la sesión pero queda bloqueada (candado) hasta validar
   la identidad del dueño del teléfono con `expo-local-authentication`. Entrar con
   email+clave siempre desbloquea; si el dispositivo no tiene sensor, la opción se oculta.
-- ⏳ **SSO** (Google / Microsoft): pendiente, requiere credenciales OAuth + build nativo.
+- ✅ **SSO (Google / Microsoft)**: botones en el Login vía `expo-auth-session`
+  (flujo público/PKCE, sin secret en el dispositivo). Cada botón solo se muestra si
+  el proveedor está configurado en `src/config.js` (`SSO`). El `id_token` se valida
+  en el backend (`POST /api/auth/sso`) contra las claves públicas del proveedor y
+  emite el JWT propio; solo habilita cuentas locales existentes (email coincidente).
+- ✅ **Login de una sola pantalla** con mostrar/ocultar contraseña, validación onBlur y
+  autocompletado del SO, más separador "o continuá con" para los accesos rápidos.
 
 ## Contenido
 
@@ -41,12 +47,12 @@ aplicada y comentada **línea por línea** en `GUIA_MOBILE.md`.
   FormularioMedico, FormularioPrescripcion).
 - `src/screens/` — Login, Bloqueo (candado biométrico), Dashboard, Pacientes, Medicos,
   Prescripciones y `PagedList` (genérico).
-- `src/context/AuthContext.jsx` — Sesión (login/logout) persistida localmente + estado
-  de bloqueo/desbloqueo biométrico.
+- `src/context/AuthContext.jsx` — Sesión (login/logout/loginSSO) persistida localmente
+  + estado de bloqueo/desbloqueo biométrico.
+- `src/config.js` — URL de la API, constantes y credenciales de SSO (`SSO`).
 - `src/utils/biometria.js` — Soporte y autenticación biométrica (huella / Face ID).
 - `src/api/client.js` — Cliente HTTP con token JWT, timeout y expulsión ante 401.
 - `src/styles.js` — Paleta y estilos compartidos (mismos colores que el Web).
-- `src/config.js` — URL de la API y constantes.
 - `GUIA_MOBILE.md` — Guía de adaptación mobile comentada línea por línea + checklist.
 
 ## Puesta en marcha

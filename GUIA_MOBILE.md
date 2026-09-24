@@ -320,8 +320,16 @@ desbloquea; sin sensor disponible la opción se oculta y nada cambia.
 Archivos: src/utils/biometria.js, src/context/AuthContext.jsx,
 src/screens/Bloqueo.jsx, src/screens/Dashboard.jsx, App.js.
 
-PENDIENTE: SSO con Google/Microsoft. Requiere credenciales OAuth de los
-proveedores + build nativo; anotado en la sección final.
+SE APLICÓ (SSO): botones "Continuar con Google" y "Continuar con
+Microsoft" en el Login (src/screens/Login.jsx). Cada botón se muestra
+SOLO si el proveedor está configurado en src/config.js (SSO). El flujo
+saca un id_token con expo-auth-session (cliente público/PKCE, sin
+secret en el dispositivo) y lo envía a POST /api/auth/sso, que valida
+la firma contra las claves públicas del proveedor y emite el JWT propio.
+Regla de negocio: solo habilita cuentas locales existentes (email debe
+coincidir). Sin credenciales en el backend, la API responde 501.
+Archivos: src/config.js, src/context/AuthContext.jsx, src/screens/Login.jsx;
+Backend: services/AuthService.php, controllers/AuthController.php, routes.php.
 -->
 
 #### Listados y gestión de registros
@@ -444,7 +452,7 @@ Implementar monitoreo continuo con métricas específicas de tráfico móvil: Co
 | ✓ CRUD completo (alta/edición/baja) | ✔ Hecho | Formularios de pacientes/médicos/prescripciones + confirmación de baja + cambio de estado con gating por rol (`src/components/formularios/*.jsx`, `src/screens/*.jsx`, `src/components/ConfirmarModal.jsx`) |
 | ✓ Performance: carga < 3s, listas livianas | ✔ Hecho | FlatList + paginado + timeout (`src/screens/PagedList.jsx`, `src/config.js`) |
 | ✓ Biometría (huella / Face ID) | ✔ Hecho | Desbloqueo de la sesión guardada con `expo-local-authentication` (`src/utils/biometria.js`, `src/screens/Bloqueo.jsx`, `src/screens/Dashboard.jsx`) |
-| ✓ SSO (Google / Microsoft) | ⏳ Próximo paso | Requiere credenciales OAuth de los proveedores + build nativo |
+| ✓ SSO (Google / Microsoft) | ✔ Hecho (requiere credenciales) | Botones en el Login con `expo-auth-session` + validación del `id_token` en el backend (`src/screens/Login.jsx`, `src/config.js`, `POST /api/auth/sso`) — funcionan al completar las credenciales OAuth en `config.js` y `.env` |
 
 ---
 
