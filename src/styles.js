@@ -31,6 +31,11 @@ export const styles = StyleSheet.create({
     color: '#333',      // Gris oscuro legible
     marginBottom: 12,   // Separación con el contenido siguiente
   },
+  // Contenedor de la cabecera del login (marca + subtítulo centrados).
+  tituloWrapper: {
+    alignItems: 'center', // Centra los textos horizontalmente
+    marginBottom: 20,     // Separación con la tarjeta del formulario
+  },
   // Etiqueta de los campos del formulario.
   label: {
     fontSize: 16,         // 16px: mínimo recomendado para mobile (guía: legibilidad)
@@ -302,5 +307,35 @@ export const styles = StyleSheet.create({
     color: '#777',                   // Gris medio (accesible como texto secundario)
     marginTop: -6,                   // Se acerca al campo al que ayuda
     marginBottom: 12,                // Separación con el siguiente elemento
+  },
+  // Fila separadora "o continuá con..." de la sección de SSO.
+  separadorSso: {
+    flexDirection: 'row',            // Línea - texto - línea en horizontal
+    alignItems: 'center',            // Alinea el texto con las líneas
+    marginVertical: 8,               // Separación con el botón superior e inferior
+  },
+  // Línea del separador de SSO.
+  lineaSso: {
+    flex: 1,               // Ocupa el espacio disponible a cada lado del texto
+    height: 1,             // Alto de 1px (línea fina)
+    backgroundColor: '#e0e0e0', // Gris claro, sutil
+  },
+  // Botón de acceso SSO (Google / Microsoft).
+  botonSso: {
+    backgroundColor: '#fff', // Fondo blanco (contraste con el degradado principal)
+    borderWidth: 1,          // Borde visible finito
+    borderColor: '#d0d0d0',  // Gris medio del borde
+    minHeight: 48,           // Target táctil alto: supera el mínimo 44px (guía)
+    justifyContent: 'center',// Centra el contenido verticalmente
+    padding: 14,             // Relleno táctil cómodo
+    borderRadius: 8,         // Esquinas redondeadas
+    alignItems: 'center',    // Centra el texto
+    marginBottom: 12,        // Separación con el siguiente elemento
+  },
+  // Texto del botón de acceso SSO.
+  botonSsoTexto: {
+    color: '#333',      // Gris oscuro (contraste > 7:1 sobre blanco, WCAG AA)
+    fontWeight: '600',  // Seminegrita
+    fontSize: 16,       // 16px: tamaño legible para el pulgar (guía)
   },
 });
