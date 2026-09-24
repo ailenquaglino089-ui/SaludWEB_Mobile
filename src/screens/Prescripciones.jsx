@@ -2,7 +2,7 @@
 // Prescripciones.jsx - Listado de prescripciones con filtro por estado
 // ============================================================
 import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View } from 'react-native';
 // Listado paginado genérico reutilizable.
 import PagedList from './PagedList';
 
@@ -25,14 +25,11 @@ const colorEstado = (estado) => {
 };
 
 // Pantalla de prescripciones: configura el listado genérico y agrega filtro.
-export default function Prescripciones({ volver }) {
+// La vuelta al Dashboard la resuelve la barra inferior (BottomNav),
+// por lo que ya no recibe la prop 'volver' (guía de navegación).
+export default function Prescripciones() {
   return (
     <View style={{ flex: 1 }}>
-      {/* Botón para volver al Dashboard */}
-      <TouchableOpacity onPress={volver} style={{ padding: 8 }}>
-        <Text style={{ color: '#667eea', fontWeight: '600' }}>← Volver</Text>
-      </TouchableOpacity>
-
       {/* Configuración del listado: ruta, título, búsqueda, columnas, filtro y badges */}
       <PagedList
         url="/prescripciones"            // Ruta del backend (paginada + filtro estado)
