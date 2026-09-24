@@ -2,21 +2,18 @@
 // Pacientes.jsx - Listado de pacientes (consume /api/pacientes)
 // ============================================================
 import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View } from 'react-native';
 // Listado paginado genérico reutilizable.
 import PagedList from './PagedList';
 // Estilos compartidos.
 import { styles } from '../styles';
 
 // Pantalla de pacientes: solo configura el componente genérico.
-export default function Pacientes({ volver }) {
+// La vuelta al Dashboard la resuelve la barra inferior (BottomNav),
+// por lo que ya no recibe la prop 'volver' (guía de navegación).
+export default function Pacientes() {
   return (
     <View style={{ flex: 1 }}>
-      {/* Botón para volver al Dashboard */}
-      <TouchableOpacity onPress={volver} style={{ padding: 8 }}>
-        <Text style={{ color: '#667eea', fontWeight: '600' }}>← Volver</Text>
-      </TouchableOpacity>
-
       {/* Configuración del listado: ruta, título, búsqueda y columnas */}
       <PagedList
         url="/pacientes"                    // Ruta del backend (paginada)

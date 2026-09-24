@@ -7,7 +7,7 @@
 // Se configura por props para Pacientes, Médicos y Prescripciones.
 import React, { useState, useEffect } from 'react';
 import {
-  View, Text, TextInput, FlatList, TouchableOpacity, ActivityIndicator, ScrollView
+  View, Text, TextInput, FlatList, TouchableOpacity, ActivityIndicator, ScrollView, Platform
 } from 'react-native';
 // Estilos compartidos de la app.
 import { styles } from '../styles';
@@ -142,6 +142,12 @@ export default function PagedList({ url, titulo, placeholder, campos, renderValo
         <FlatList
           data={datos}
           keyExtractor={(item) => String(item.id)}
+          // --- Rendimiento aplicado de la guía (Optimización de rendimiento) ---
+          initialNumToRender={POR_PAGINA}         // Renderiza solo la página inicial
+          windowSize={7}                          // Ventana de render reducida en ambos ejes
+          removeClippedSubviews={Platform.OS === 'android'} // Libera vistas fuera de pantalla (Android)
+          keyboardShouldPersistTaps="handled"     // Permite tocar mientras el teclado está abierto
+          keyboardDismissMode="on-drag"           // Cierra el teclado al hacer scroll (fricción reducida)
           ListEmptyComponent={() => (
             // Mensaje amable cuando no hay resultados
             <View style={styles.tarjeta}>

@@ -1,32 +1,35 @@
 // ============================================================
-// Dashboard.jsx - Panel inicial con accesos y datos del usuario
+// Dashboard.jsx - Panel inicial con datos del usuario
 // ============================================================
+// Aplicando el punto "Simplificación radical del menú principal"
+// de la guía: la navegación a Módulos se movió a la barra inferior
+// (BottomNav) y en el Dashboard solo queda el saludo y el rol.
 import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text } from 'react-native';
 // Estilos compartidos de la app.
 import { styles } from '../styles';
-// Contexto de autenticación (usuario logueado y cierre de sesión).
+// Contexto de autenticación (usuario logueado).
 import { useAuth } from '../context/AuthContext';
 
-// Pantalla principal: saluda al usuario y ofrece accesos a los módulos.
-// Recibe 'navegar(destino)' para moverse entre pantallas sin librerías de navegación.
-export default function Dashboard({ navegar, cerrarSesion }) {
+// Devuelve el emoji del rol para el saludo.
+const emojiRol = (rol) => {
+  if (rol === 'medico') return '👨‍⚕️';  // Médico
+  if (rol === 'admin') return '🛡️';      // Administrador
+  return '👤';                            // Paciente (por defecto)
+};
+
+// Devuelve la etiqueta en español del rol.
+const textoRol = (rol) => {
+  if (rol === 'medico') return 'Médico';
+  if (rol === 'admin') return 'Administrador';
+  return 'Paciente';
+};
+
+// Pantalla principal: saluda al usuario y resume su contexto.
+// No recibe props: la navegación la resuelve BottomNav en App.js.
+export default function Dashboard() {
   // Datos del usuario logueado (nombre y rol).
   const { usuario } = useAuth();
-
-  // Devuelve el emoji del rol para el saludo.
-  const emojiRol = (rol) => {
-    if (rol === 'medico') return '👨‍⚕️';  // Médico
-    if (rol === 'admin') return '🛡️';      // Administrador
-    return '👤';                            // Paciente (por defecto)
-  };
-
-  // Devuelve la etiqueta en español del rol.
-  const textoRol = (rol) => {
-    if (rol === 'medico') return 'Médico';
-    if (rol === 'admin') return 'Administrador';
-    return 'Paciente';
-  };
 
   return (
     <View style={styles.contenedor}>
@@ -40,30 +43,12 @@ export default function Dashboard({ navegar, cerrarSesion }) {
         </Text>
       </View>
 
-      {/* Módulos disponibles: cada botón navega a su listado */}
+      {/* Aviso de navegación: las opciones críticas están en la barra inferior */}
       <View style={styles.tarjeta}>
-        <Text style={styles.titulo}>Módulos</Text>
-
-        {/* Acceso a Pacientes */}
-        <TouchableOpacity style={styles.botonPrimario} onPress={() => navegar('pacientes')}>
-          <Text style={styles.botonPrimarioTexto}>👤 Pacientes</Text>
-        </TouchableOpacity>
-
-        {/* Acceso a Médicos */}
-        <TouchableOpacity style={styles.botonPrimario} onPress={() => navegar('medicos')}>
-          <Text style={styles.botonPrimarioTexto}>👨‍⚕️ Médicos</Text>
-        </TouchableOpacity>
-
-        {/* Acceso a Prescripciones */}
-        <TouchableOpacity style={styles.botonPrimario} onPress={() => navegar('prescripciones')}>
-          <Text style={styles.botonPrimarioTexto}>💊 Prescripciones</Text>
-        </TouchableOpacity>
+        <Text style={styles.texto}>
+          📱 Usá la barra inferior para acceder a Pacientes, Médicos, Recetas y Salir.
+        </Text>
       </View>
-
-      {/* Botón de cierre de sesión */}
-      <TouchableOpacity style={styles.botonPeligro} onPress={cerrarSesion}>
-        <Text style={[styles.botonPrimarioTexto, { textAlign: 'center' }]}>Cerrar Sesión</Text>
-      </TouchableOpacity>
     </View>
   );
 }

@@ -2,19 +2,16 @@
 // Medicos.jsx - Listado de médicos (consume /api/medicos)
 // ============================================================
 import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View } from 'react-native';
 // Listado paginado genérico reutilizable.
 import PagedList from './PagedList';
 
 // Pantalla de médicos: solo configura el componente genérico.
-export default function Medicos({ volver }) {
+// La vuelta al Dashboard la resuelve la barra inferior (BottomNav),
+// por lo que ya no recibe la prop 'volver' (guía de navegación).
+export default function Medicos() {
   return (
     <View style={{ flex: 1 }}>
-      {/* Botón para volver al Dashboard */}
-      <TouchableOpacity onPress={volver} style={{ padding: 8 }}>
-        <Text style={{ color: '#667eea', fontWeight: '600' }}>← Volver</Text>
-      </TouchableOpacity>
-
       {/* Configuración del listado: ruta, título, búsqueda y columnas */}
       <PagedList
         url="/medicos"                          // Ruta del backend (paginada)
