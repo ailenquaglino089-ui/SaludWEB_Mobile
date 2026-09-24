@@ -26,6 +26,11 @@ aplicada y comentada **línea por línea** en `GUIA_MOBILE.md`.
 - ✅ **Usabilidad**: targets táctiles de 44px+, tipografía de 16px y contraste WCAG AA.
 - ✅ **Rendimiento**: FlatList virtualizada, paginado y timeout de peticiones.
 - ✅ **Persistencia de sesión** con AsyncStorage (no se vuelve a pedir login al reabrir).
+- ✅ **Biometría (huella / Face ID)**: "Proteger con huella" activable desde el Dashboard;
+  la próxima apertura restaura la sesión pero queda bloqueada (candado) hasta validar
+  la identidad del dueño del teléfono con `expo-local-authentication`. Entrar con
+  email+clave siempre desbloquea; si el dispositivo no tiene sensor, la opción se oculta.
+- ⏳ **SSO** (Google / Microsoft): pendiente, requiere credenciales OAuth + build nativo.
 
 ## Contenido
 
@@ -34,8 +39,11 @@ aplicada y comentada **línea por línea** en `GUIA_MOBILE.md`.
   `CampoInput.jsx` (campo reutilizable), `Selector.jsx` (picker modal),
   `ConfirmarModal.jsx` (confirmación de borrado) y `formularios/` (FormularioPaciente,
   FormularioMedico, FormularioPrescripcion).
-- `src/screens/` — Login, Dashboard, Pacientes, Medicos, Prescripciones y `PagedList` (genérico).
-- `src/context/AuthContext.jsx` — Sesión (login/logout) persistida localmente.
+- `src/screens/` — Login, Bloqueo (candado biométrico), Dashboard, Pacientes, Medicos,
+  Prescripciones y `PagedList` (genérico).
+- `src/context/AuthContext.jsx` — Sesión (login/logout) persistida localmente + estado
+  de bloqueo/desbloqueo biométrico.
+- `src/utils/biometria.js` — Soporte y autenticación biométrica (huella / Face ID).
 - `src/api/client.js` — Cliente HTTP con token JWT, timeout y expulsión ante 401.
 - `src/styles.js` — Paleta y estilos compartidos (mismos colores que el Web).
 - `src/config.js` — URL de la API y constantes.
