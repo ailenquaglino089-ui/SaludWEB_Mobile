@@ -16,6 +16,13 @@ aplicada y comentada **línea por línea** en `GUIA_MOBILE.md`.
   Recetas y Salir, siempre visibles en la zona del pulgar.
 - ✅ **Listados paginados** server-side con búsqueda (debounce 400ms), filtros por estado
   y cards apilables (ya no tablas).
+- ✅ **CRUD completo** (alta/edición/baja) en flujo único por módulo: formularios con
+  pie fijo de Confirmar/Cancelar, confirmación de borrado y cambio de estado de
+  prescripciones, todo con gating por rol.
+- ✅ **Permisos por rol** (mismas reglas que el backend):
+  - Pacientes y médicos: crear/editar/eliminar → **admin**.
+  - Prescripciones: crear/editar → **médico**; cambiar estado → **cualquier rol**;
+    eliminar → **admin**.
 - ✅ **Usabilidad**: targets táctiles de 44px+, tipografía de 16px y contraste WCAG AA.
 - ✅ **Rendimiento**: FlatList virtualizada, paginado y timeout de peticiones.
 - ✅ **Persistencia de sesión** con AsyncStorage (no se vuelve a pedir login al reabrir).
@@ -23,7 +30,10 @@ aplicada y comentada **línea por línea** en `GUIA_MOBILE.md`.
 ## Contenido
 
 - `App.js` — Punto de entrada y navegación por estado + barra inferior.
-- `src/components/` — `BottomNav.jsx` (barra de navegación inferior sticky).
+- `src/components/` — `BottomNav.jsx` (barra de navegación inferior sticky),
+  `CampoInput.jsx` (campo reutilizable), `Selector.jsx` (picker modal),
+  `ConfirmarModal.jsx` (confirmación de borrado) y `formularios/` (FormularioPaciente,
+  FormularioMedico, FormularioPrescripcion).
 - `src/screens/` — Login, Dashboard, Pacientes, Medicos, Prescripciones y `PagedList` (genérico).
 - `src/context/AuthContext.jsx` — Sesión (login/logout) persistida localmente.
 - `src/api/client.js` — Cliente HTTP con token JWT, timeout y expulsión ante 401.

@@ -23,7 +23,13 @@ import { POR_PAGINA } from '../config';
 //  - campos: [{clave, etiqueta}] define qué columnas se muestran por registro
 //  - renderValor: (registro, campo) => texto; personaliza el valor mostrado
 //  - filtros: [{valor, etiqueta}] para filtrar por un campo (ej: estado de prescripción)
-export default function PagedList({ url, titulo, placeholder, campos, renderValor, filtros = [] }) {
+//  - onNuevo: (() => void) | null; si viene, muestra un botón verde "Nuevo" (alta)
+//  - renderAcciones: (registro) => ReactNode | null; si viene, dibuja una fila de
+//    acciones (Editar/Eliminar/Estado) al pie de cada tarjeta (CRUD)
+export default function PagedList({
+  url, titulo, placeholder, campos, renderValor, filtros = [],
+  onNuevo = null, renderAcciones = null
+}) {
   // Página actual (empieza en 1).
   const [pagina, setPagina] = useState(1);
   // Registros de la página actual.
@@ -106,6 +112,14 @@ export default function PagedList({ url, titulo, placeholder, campos, renderValo
         onChangeText={setBusqueda}
       />
 
+      {/* Botón "Nuevo" de alta: solo se muestra si la pantalla lo habilita (onNuevo).
+          Permite crear un registro desde el listado (CRUD completo). */}
+      {onNuevo ? (
+        <TouchableOpacity style={styles.botonNuevo} onPress={onNuevo}>
+          <Text style={styles.botonNuevoTexto}>＋ Nuevo</Text>
+        </TouchableOpacity>
+      ) : null}
+
       {/* Filtros opcionales tipo "chip" (ej: estados de prescripción) */}
       {filtros.length > 0 && (
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
@@ -165,6 +179,11 @@ export default function PagedList({ url, titulo, placeholder, campos, renderValo
                   <Text style={styles.filaValor}>{mostrarValor(item, campo)}</Text>
                 </View>
               ))}
+              {/* Acciones del CRUD (Editar/Eliminar/Estado): se dibujan al pie
+                  de la tarjeta solo si la pantalla pasa el renderizado (renderAcciones) */}
+              {renderAcciones ? (
+                <View style={styles.pieAcciones}>{renderAcciones(item)}</View>
+              ) : null}
             </View>
           )}
         />
