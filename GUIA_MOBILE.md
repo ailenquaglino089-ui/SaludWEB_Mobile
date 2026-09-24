@@ -48,10 +48,13 @@ Archivo: src/screens/PagedList.jsx.
 La meta final no es crear una versión reducida del sistema, sino alcanzar una paridad funcional completa con la versión desktop. El usuario móvil debe poder realizar exactamente las mismas tareas críticas sin fricciones ni limitaciones artificiales.
 
 <!-- Comentario (aplicación):
-La app consume la MISMA API REST del backend con JWT y roles, por lo que autenticación
-y consultas son idénticas a la web. Los flujos completos de alta/edición/baja quedan
-registrados como siguiente paso en el checklist del final.
-Archivos: src/api/client.js, src/context/AuthContext.jsx.
+La app consume la MISMA API REST del backend con JWT y roles, por lo que autenticación,
+consultas y operaciones de alta/edición/baja son idénticas a la web: pacientes y
+médicos los gestiona el admin, las prescripciones solo las crea/edita el médico, el
+cambio de estado lo puede hacer cualquier rol y el borrado siempre lo ejecuta el admin
+(mismas reglas que routes.php del backend).
+Archivos: src/api/client.js, src/context/AuthContext.jsx, src/screens/*.jsx,
+src/components/formularios/*.jsx.
 -->
 
 > El 53% de los usuarios abandona un sitio si tarda más de 3 segundos en cargar en mobile. La velocidad y la usabilidad van de la mano.
@@ -197,9 +200,14 @@ activados en Android. Ver src/screens/PagedList.jsx (filtros).
 Los formularios son el punto de mayor fricción en cualquier experiencia mobile. Escribir en una pantalla pequeña es inherentemente más costoso que hacerlo en un teclado físico, por lo que cada campo innecesario es un obstáculo que aumenta la tasa de abandono. El principio rector es: cada campo que eliminamos es una victoria para el usuario y para la tasa de conversión del sistema.
 
 <!-- Comentario (aplicación):
-El único formulario actual es el Login y quedó reducido a los 2 campos esenciales
-(email + contraseña) en una sola pantalla sin scroll.
-Archivo: src/screens/Login.jsx.
+Cuando se creó esta documentación el único formulario era el Login, reducido a los 2
+campos esenciales (email + contraseña) en una sola pantalla sin scroll
+(src/screens/Login.jsx). Con el CRUD completo se agregaron los formularios de
+pacientes, médicos y prescripciones con solo los campos indispensables de cada
+entidad; los campos opcionales quedan marcados y los catálogos (obra social,
+pacientes) se eligen con un Selector en lugar de teclearlos.
+Archivos: src/screens/Login.jsx, src/components/CampoInput.jsx,
+src/components/Selector.jsx, src/components/formularios/*.jsx.
 -->
 
 #### Minimización de campos
@@ -225,8 +233,11 @@ El equivalente en React Native es keyboardType: el email usa "email-address" (te
 con @ y .) y la contraseña usa secureTextEntry. Las etiquetas están SIEMPRE visibles
 (no solo placeholders), tal como recomienda la guía.
 
-Para futuros formularios (montos de obra social, DNI) se usaría keyboardType="number-pad"
-/ "decimal-pad". Queda anotado para los formularios de CRUD (checklist final).
+Aplicado también en los formularios del CRUD: el DNI y la fecha de vencimiento usan
+teclados numéricos (number-pad / numbers-and-punctuation), las indicaciones usan
+multiline, y los selects (obra social, paciente) abren una lista modal (Selector) en
+vez de pedir escribir a mano. Archivos: FormularioPaciente.jsx, FormularioMedico.jsx,
+FormularioPrescripcion.jsx, src/components/Selector.jsx.
 -->
 
 #### Validación en tiempo real
@@ -326,10 +337,16 @@ Las operaciones de creación y edición no deben romper el layout ni generar ven
 > **Criterio de aceptación:** un usuario nuevo debe poder completar cada operación CRUD en menos de 60 segundos sin instrucciones previas.
 
 <!-- Comentario (aplicación):
-La base del flujo (leer listados, datos paginados, búsqueda) está implementada y
-validada contra la API real. Los formularios de ALTA/EDICIÓN/BAJA de pacientes,
-médicos y prescripciones desde mobile quedan como próximo paso; al implementarlos se
-usará un footer fijo de Confirmar/Cancelar tal como indica la guía.
+SE APLICÓ por completo: el CRUD funciona en flujo único dentro de cada módulo.
+Al tocar "Nuevo", "Editar" o "Eliminar", la pantalla muestra el formulario (alta/
+edición) o el diálogo de confirmación sin abandonar el módulo ni abrir vistas modales
+a pantalla completa. Cada formulario mantiene un pie FIJO con los botones
+Confirmar/Cancelar siempre visibles (styles.pieFormulario), tal como pide la guía.
+El alta/edición valida en el cliente con las mismas reglas que el backend, se añaden
+medicamentos de forma dinámica (lista de filas con agregar/quitar) y el borrado exige
+confirmación explícita antes de enviar el DELETE.
+Archivos: src/screens/Pacientes.jsx, Medicos.jsx, Prescripciones.jsx,
+src/components/formularios/*.jsx, src/components/ConfirmarModal.jsx.
 -->
 
 ---
@@ -405,6 +422,7 @@ Implementar monitoreo continuo con métricas específicas de tráfico móvil: Co
 | 6 | Contraseña escrita a ciegas en teclados táctiles | Media | Todos | Botón mostrar/ocultar (`src/screens/Login.jsx`) |
 | 7 | Sin autocompletado de credenciales | Media | Todos | `autoComplete` + `textContentType` (`src/screens/Login.jsx`) |
 | 8 | Listados pesados en redes lentas | Media | 3G/4G | Paginado server-side + FlatList virtualizada (`src/screens/PagedList.jsx`) |
+| 9 | CRUD de solo lectura (sin alta/edición/baja desde mobile) | Alta | Todos | Formularios de alta/edición con footer fijo, confirmación de borrado, cambio de estado y gating por rol (`src/components/formularios/*.jsx`, `src/screens/*.jsx`, `src/components/ConfirmarModal.jsx`) |
 
 ## Checklist de entregable (guía)
 
@@ -415,7 +433,7 @@ Implementar monitoreo continuo con métricas específicas de tráfico móvil: Co
 | ✓ Navegación rediseñada (Bottom Nav, 5 ítems) | ✔ Hecho | `src/components/BottomNav.jsx`, `App.js` |
 | ✓ Login validado (onBlur, mostrar/ocultar, autocompletado) | ✔ Hecho | `src/screens/Login.jsx` |
 | ✓ CRUD validado en los listados | ✔ Hecho | Login y Listados contra la API real |
-| ✓ CRUD completo (alta/edición/baja) | ⏳ Próximo paso | Pendiente de implementar (la API ya lo soporta) |
+| ✓ CRUD completo (alta/edición/baja) | ✔ Hecho | Formularios de pacientes/médicos/prescripciones + confirmación de baja + cambio de estado con gating por rol (`src/components/formularios/*.jsx`, `src/screens/*.jsx`, `src/components/ConfirmarModal.jsx`) |
 | ✓ Performance: carga < 3s, listas livianas | ✔ Hecho | FlatList + paginado + timeout (`src/screens/PagedList.jsx`, `src/config.js`) |
 | ✓ Biometría / SSO | ⏳ Próximo paso | Requiere `expo-local-authentication` y build nativo |
 

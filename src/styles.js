@@ -178,4 +178,125 @@ export const styles = StyleSheet.create({
     marginTop: -6,               // Se acerca al campo para asociarse visualmente
     marginBottom: 12,            // Separación con el siguiente elemento
   },
+
+  // --- Estilos nuevos del CRUD completo (alta/edición/baja desde mobile) ---
+
+  // Banner de éxito (verde): feedback positivo tras guardar o eliminar.
+  exito: {
+    color: '#166534',                // Texto verde oscuro (contraste alto)
+    backgroundColor: '#dcfce7',      // Fondo verde muy claro
+    padding: 10,                     // Relleno del banner
+    borderRadius: 8,                 // Esquinas redondeadas
+    marginBottom: 12,                // Separación con el contenido siguiente
+    borderWidth: 2,                  // Borde visible
+    borderColor: '#86efac',          // Borde verde suave
+  },
+
+  // Botón verde "Nuevo" (alta de registros) al tope del listado.
+  botonNuevo: {
+    backgroundColor: '#22c55e',      // Verde de éxito (acción de crear)
+    minHeight: 48,                   // Altura táctil superior al mínimo 44px (guía)
+    justifyContent: 'center',        // Centra el contenido verticalmente
+    alignItems: 'center',            // Centra el texto
+    borderRadius: 8,                 // Esquinas redondeadas
+    padding: 14,                     // Relleno táctil cómodo
+    marginBottom: 12,                // Separación con el buscador/lista
+  },
+  // Texto del botón "Nuevo".
+  botonNuevoTexto: {
+    color: '#fff',                   // Blanco (contrasta con el verde)
+    fontWeight: '700',               // Negrita
+    fontSize: 16,                    // 16px mínimo legible en mobile (guía)
+  },
+
+  // Botón pequeño de acción dentro de una tarjeta (Editar/Eliminar/Estado).
+  botonAccion: {
+    minHeight: 44,                   // Target táctil mínimo 44px (guía)
+    justifyContent: 'center',        // Centra el contenido verticalmente
+    alignItems: 'center',            // Centra el texto
+    borderRadius: 8,                 // Esquinas redondeadas
+    paddingHorizontal: 12,           // Relleno lateral cómodo
+    paddingVertical: 8,              // Relleno vertical
+    marginRight: 8,                  // Separación entre botones de acciones
+  },
+  // Variante visual de "Editar" (fondo índigo muy claro).
+  botonAccionClaro: {
+    backgroundColor: '#e0e7ff',      // Fondo índigo claro
+  },
+  // Variante visual de "Eliminar" (fondo rojo muy claro).
+  botonAccionPeligro: {
+    backgroundColor: '#fee2e2',      // Fondo rojo claro
+  },
+  // Texto índigo de las acciones "positivas" (Editar/Estado).
+  textoAccion: {
+    color: '#4338ca',                // Índigo oscuro (contraste alto)
+    fontWeight: '600',               // Seminegrita
+    fontSize: 14,                    // Tamaño legible del botón
+  },
+  // Texto rojo de "Eliminar" (comunica peligro visualmente).
+  textoAccionPeligro: {
+    color: '#b91c1c',                // Rojo oscuro (contraste alto)
+    fontWeight: '600',               // Seminegrita
+    fontSize: 14,                    // Tamaño legible del botón
+  },
+  // Fila horizontal que contiene los botones de acción de una tarjeta.
+  pieAcciones: {
+    flexDirection: 'row',            // Botones en horizontal
+    justifyContent: 'flex-end',      // Alineados a la derecha de la tarjeta
+    marginTop: 10,                   // Separación con los datos del registro
+  },
+
+  // Pie FIJO de los formularios: acciones siempre visibles junto al pulgar
+  // (punto "Pies fijos de formularios" de la guía de adaptación a mobile).
+  pieFormulario: {
+    backgroundColor: '#ffffff',      // Fondo blanco (igual al Web)
+    borderTopWidth: 1,               // Línea separadora superior
+    borderTopColor: '#e0e0e0',       // Color de la línea
+    padding: 12,                     // Relleno del pie
+    flexDirection: 'row',            // Botones lado a lado
+    gap: 8,                          // Separación entre los dos botones
+  },
+  // Botón que ocupa la mitad del ancho del pie (Cancelar / Guardar).
+  botonMitad: {
+    flex: 1,                         // Reparte el ancho en partes iguales
+  },
+  // Texto del botón de peligro (borrado): blanco sobre rojo.
+  botonPeligroTexto: {
+    color: '#fff',                   // Blanco (contrasta con el rojo)
+    fontWeight: '600',               // Seminegrita
+    fontSize: 16,                    // 16px mínimo legible (guía)
+  },
+
+  // Fila de un medicamento dinámico dentro de la prescripción.
+  filaMedicamento: {
+    flexDirection: 'row',            // Nombre + dosis + botón quitar en horizontal
+    alignItems: 'center',            // Centrado vertical de los tres elementos
+    marginBottom: 8,                 // Separación entre filas de medicamentos
+  },
+  // Campo "nombre" del medicamento (ocupa más ancho).
+  campoMedicamentoNombre: {
+    flex: 3,                         // Proporción 3/5 del ancho
+    marginRight: 8,                  // Separación con el campo dosis
+    marginBottom: 0,                 // Anula el margen del input por defecto
+  },
+  // Campo "dosis" del medicamento (más angosto).
+  campoMedicamentoDosis: {
+    flex: 2,                         // Proporción 2/5 del ancho
+    marginRight: 8,                  // Separación con el botón quitar
+    marginBottom: 0,                 // Anula el margen del input por defecto
+  },
+  // Botón para quitar un medicamento de la lista dinámica.
+  botonQuitar: {
+    minHeight: 44,                   // Target táctil mínimo 44px (guía)
+    justifyContent: 'center',        // Centra el ícono verticalmente
+    alignItems: 'center',            // Centra el ícono horizontalmente
+    paddingHorizontal: 8,            // Relleno lateral cómodo
+  },
+  // Texto de ayuda bajo un campo (explica el formato esperado).
+  ayuda: {
+    fontSize: 14,                    // Tamaño de ayuda
+    color: '#777',                   // Gris medio (accesible como texto secundario)
+    marginTop: -6,                   // Se acerca al campo al que ayuda
+    marginBottom: 12,                // Separación con el siguiente elemento
+  },
 });
