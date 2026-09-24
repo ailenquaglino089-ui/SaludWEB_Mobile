@@ -309,11 +309,19 @@ Los tres flujos más críticos de cualquier sistema de gestión — autenticaci�
 La pantalla de login debe ser la más simple y rápida del sistema. Implementar autenticación biométrica (huella dactilar y Face ID) como método principal elimina la necesidad de teclear credenciales repetidamente. Los botones de acceso rápido con Google o Microsoft SSO reducen la fricción al mínimo. El campo de contraseña debe incluir la opción de mostrar/ocultar para evitar errores de tipeo en teclados táctiles, y el formulario debe completarse en una sola pantalla sin scroll.
 
 <!-- Comentario (aplicación):
-SE APLICÓ parcial: login en una sola pantalla sin scroll, contraseña con botón
+SE APLICÓ: login en una sola pantalla sin scroll, contraseña con botón
 mostrar/ocultar, validación onBlur y autocompletado del SO.
 
-PENDIENTE (documentado como siguiente paso): biometría (expo-local-authentication)
-y SSO. Requieren librerías nativas nuevas y build, anotado en la sección final.
+SE APLICÓ (biometría): "Proteger con huella" (expo-local-authentication).
+Al activarlo en el Dashboard, la próxima apertura de la app restaura la
+sesión pero queda BLOQUEADA y pide huella/Face ID antes de entrar
+(pantalla src/screens/Bloqueo.jsx). Entrar con email+clave siempre
+desbloquea; sin sensor disponible la opción se oculta y nada cambia.
+Archivos: src/utils/biometria.js, src/context/AuthContext.jsx,
+src/screens/Bloqueo.jsx, src/screens/Dashboard.jsx, App.js.
+
+PENDIENTE: SSO con Google/Microsoft. Requiere credenciales OAuth de los
+proveedores + build nativo; anotado en la sección final.
 -->
 
 #### Listados y gestión de registros
@@ -435,7 +443,8 @@ Implementar monitoreo continuo con métricas específicas de tráfico móvil: Co
 | ✓ CRUD validado en los listados | ✔ Hecho | Login y Listados contra la API real |
 | ✓ CRUD completo (alta/edición/baja) | ✔ Hecho | Formularios de pacientes/médicos/prescripciones + confirmación de baja + cambio de estado con gating por rol (`src/components/formularios/*.jsx`, `src/screens/*.jsx`, `src/components/ConfirmarModal.jsx`) |
 | ✓ Performance: carga < 3s, listas livianas | ✔ Hecho | FlatList + paginado + timeout (`src/screens/PagedList.jsx`, `src/config.js`) |
-| ✓ Biometría / SSO | ⏳ Próximo paso | Requiere `expo-local-authentication` y build nativo |
+| ✓ Biometría (huella / Face ID) | ✔ Hecho | Desbloqueo de la sesión guardada con `expo-local-authentication` (`src/utils/biometria.js`, `src/screens/Bloqueo.jsx`, `src/screens/Dashboard.jsx`) |
+| ✓ SSO (Google / Microsoft) | ⏳ Próximo paso | Requiere credenciales OAuth de los proveedores + build nativo |
 
 ---
 

@@ -13,6 +13,7 @@ import { AuthProvider, useAuth } from './src/context/AuthContext';
 import BottomNav from './src/components/BottomNav';
 // Pantallas de la aplicación.
 import Login from './src/screens/Login';
+import Bloqueo from './src/screens/Bloqueo';
 import Dashboard from './src/screens/Dashboard';
 import Pacientes from './src/screens/Pacientes';
 import Medicos from './src/screens/Medicos';
@@ -22,8 +23,8 @@ import Prescripciones from './src/screens/Prescripciones';
 function ContenidoApp() {
   // Estado de la navegación: pantalla activa (dashboard por defecto).
   const [pantalla, setPantalla] = useState('dashboard');
-  // Estado de sesión (autenticado, cargando, logout) desde el contexto.
-  const { autenticado, cargando, logout } = useAuth();
+  // Estado de sesión (autenticado, cargando, desbloqueado, logout) desde el contexto.
+  const { autenticado, cargando, desbloqueado, logout } = useAuth();
 
   // Mientras se restaura la sesión guardada se muestra una pantalla vacía
   // (evita "flashes" de login para usuarios que ya tenían sesión).
@@ -31,6 +32,10 @@ function ContenidoApp() {
 
   // Sin sesión: siempre se muestra el Login (la navegación queda oculta).
   if (!autenticado) return <Login />;
+
+  // Sesión restaurada pero bloqueada por "Proteger con huella": solo el
+  // candado es visible; se prohibe la navegación hasta validar biometría.
+  if (!desbloqueado) return <Bloqueo />;
 
   // Con sesión: devuelve la pantalla activa elegida en la barra inferior.
   const pantallaActiva = () => {

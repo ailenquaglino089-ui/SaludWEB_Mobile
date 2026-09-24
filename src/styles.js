@@ -65,6 +65,10 @@ export const styles = StyleSheet.create({
     fontWeight: '600',  // Seminegrita
     fontSize: 16,       // Tamaño legible para el pulgar
   },
+  // Botón primario atenuado (estado "deshabilitado" del candado biométrico).
+  botonPrimarioOscurecido: {
+    opacity: 0.6, // Reduce el contraste para indicar que no se puede tocar
+  },
   // Botón de navegación secundario (paginación, volver).
   botonSecundario: {
     backgroundColor: '#e0e0e0', // Fondo gris claro
