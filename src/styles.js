@@ -54,9 +54,12 @@ export const styles = StyleSheet.create({
     backgroundColor: '#fff', // Fondo blanco
     marginBottom: 12,        // Separación entre campos
   },
-  // Botón principal (degradado igual al Web: .btn-primary).
+  // Botón principal. Usa el mismo violeta que el Web.
+  // Antes era #667eea, que con el texto blanco daba 3.66:1 y quedaba
+  // fuera de AA. Pasa a #5a6fd0, que da 4.55:1: es el mismo color de
+  // marca, un punto más oscuro, y ahora sí se lee.
   botonPrimario: {
-    backgroundColor: '#667eea', // Azul índigo base del degradado
+    backgroundColor: '#5a6fd0', // Violeta de marca, verificado a 4.55:1 con blanco
     minHeight: 48,              // Target táctil alto: supera el mínimo 44px (guía)
     justifyContent: 'center',   // Centra el contenido verticalmente
     padding: 14,                // Relleno táctil
@@ -83,9 +86,10 @@ export const styles = StyleSheet.create({
     borderRadius: 8,            // Esquinas redondeadas
     alignItems: 'center',       // Centra el texto
   },
-  // Botón de peligro (deshabilitado en esta versión de solo-consulta).
+  // Botón de peligro (borrado). El rojo era #ef4444, que con el texto
+  // blanco daba 3.76:1. Pasa a #b3261e, que da 6.54:1.
   botonPeligro: {
-    backgroundColor: '#ef4444', // Rojo (mismo .btn-danger del Web)
+    backgroundColor: '#b3261e', // Rojo de peligro, verificado a 6.54:1 con blanco
     minHeight: 44,              // Altura táctil mínima recomendada 44px (guía)
     justifyContent: 'center',   // Centra el contenido verticalmente
     padding: 10,                // Relleno
@@ -151,7 +155,8 @@ export const styles = StyleSheet.create({
   // Etiqueta del ítem activo (resaltado en el color de la marca).
   navActivo: {
     fontSize: 12,                // Etiqueta compacta
-    color: '#667eea',            // Azul índigo (ítem seleccionado)
+    color: '#5a6fd0',            // Violeta de marca: 4.55:1 sobre blanco.
+                                  // Antes #667eea daba 3.66:1 y no pasaba AA.
     fontWeight: '700',           // Negrita
   },
   // Etiqueta del ítem inactivo.
@@ -202,8 +207,11 @@ export const styles = StyleSheet.create({
   },
 
   // Botón verde "Nuevo" (alta de registros) al tope del listado.
+  // El verde era #22c55e y con el texto blanco daba 2.28:1, el peor
+  // contraste de toda la app: el botón que crea un registro era el que
+  // menos se leía. Pasa a #166534, que da 7.13:1.
   botonNuevo: {
-    backgroundColor: '#22c55e',      // Verde de éxito (acción de crear)
+    backgroundColor: '#166534',
     minHeight: 48,                   // Altura táctil superior al mínimo 44px (guía)
     justifyContent: 'center',        // Centra el contenido verticalmente
     alignItems: 'center',            // Centra el texto
@@ -304,7 +312,9 @@ export const styles = StyleSheet.create({
   // Texto de ayuda bajo un campo (explica el formato esperado).
   ayuda: {
     fontSize: 14,                    // Tamaño de ayuda
-    color: '#777',                   // Gris medio (accesible como texto secundario)
+    color: '#6e6e6e',               // 4.68:1 sobre #f5f5f5, el fondo real de
+                                    // las tarjetas. Antes era #777, que daba
+                                    // 4.11:1 y no llegaba a 4.5:1.
     marginTop: -6,                   // Se acerca al campo al que ayuda
     marginBottom: 12,                // Separación con el siguiente elemento
   },
@@ -324,7 +334,11 @@ export const styles = StyleSheet.create({
   botonSso: {
     backgroundColor: '#fff', // Fondo blanco (contraste con el degradado principal)
     borderWidth: 1,          // Borde visible finito
-    borderColor: '#d0d0d0',  // Gris medio del borde
+    // El borde es lo único que separa este botón blanco del fondo
+    // degradado de la pantalla, así que es un componente de interfaz y
+    // WCAG 1.4.11 le exige 3:1. #d0d0d0 daba 1.5:1 contra el blanco: en
+    // la práctica el botón se veía como un hueco sin borde.
+    borderColor: '#767676',
     minHeight: 48,           // Target táctil alto: supera el mínimo 44px (guía)
     justifyContent: 'center',// Centra el contenido verticalmente
     padding: 14,             // Relleno táctil cómodo

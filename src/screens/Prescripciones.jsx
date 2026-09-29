@@ -31,13 +31,25 @@ const etiquetaEstado = (estado) => {
   return estado; // Cualquier otro valor se muestra tal cual
 };
 
-// Devuelve el color del estado (igual que getStatusColor del Web).
+// Devuelve el color del estado (misma tabla que el Web), usado como color
+// de TEXTO sobre la tarjeta blanca.
+//
+// Los cuatro valores anteriores eran los colores por defecto de Tailwind
+// (#22c55e, #f59e0b, #3b82f6, #ef4444) y ninguno llegaba a 4.5:1 sobre
+// blanco: 2.28, 2.15, 3.68 y 3.76. Es decir, los cuatro estados de una
+// prescripción eran ilegibles, y el peor era justamente el verde de
+// "activa", que es el estado que más se lee.
+//
+// Ahora usan los mismos tokens verificados que el Web: 4.55, 4.53, 4.52
+// y 6.54:1. Un color que funciona en la web tiene que funcionar en el
+// móvil; tener dos paletas distintas hacía que corregir uno dejaba al otro
+// roto.
 const colorEstado = (estado) => {
-  if (estado === 'activa') return '#22c55e';    // Verde
-  if (estado === 'vencida') return '#f59e0b';   // Ámbar
-  if (estado === 'dispensada') return '#3b82f6';   // Azul
-  if (estado === 'cancelada') return '#ef4444'; // Rojo
-  return '#6b7280'; // Gris para valores no previstos
+  if (estado === 'activa') return '#12883e';    // --exito,     4.55:1
+  if (estado === 'vencida') return '#ad6500';    // --aviso,     4.53:1
+  if (estado === 'dispensada') return '#197ac7'; // --info,      4.52:1
+  if (estado === 'cancelada') return '#b3261e'; // --error,     6.54:1
+  return '#495057';                              // --texto-medio, 8.18:1
 };
 
 // Modal de cambio de estado: lista las 4 opciones permitidas

@@ -91,9 +91,12 @@ export default function Selector({
           }}>
             <Text style={[styles.titulo, { fontSize: 18 }]}>{etiqueta}</Text>
 
-            {/* Mientras llega el catálogo se muestra la ruleta giratoria */}
+            {/* Mientras llega el catálogo se muestra la ruleta giratoria.
+                El color de un ActivityIndicator es gráfico, no texto: no le
+                aplica el 4.5:1 de WCAG, así que acá alcanza con que se vea
+                y coincida con la marca de la app. */}
             {cargando ? (
-              <ActivityIndicator color="#667eea" style={{ marginVertical: 20 }} />
+              <ActivityIndicator color="#5a6fd0" style={{ marginVertical: 20 }} />
             ) : (
               <FlatList
                 data={opciones}

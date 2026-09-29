@@ -75,8 +75,14 @@ export default function Dashboard() {
           <Switch
             value={bioPreferido}
             onValueChange={cambiarPreferencia}
-            // Colores del interruptor encendido/apagado (contraste visible)
-            trackColor={{ false: '#d0d0d0', true: '#667eea' }}
+            // Colores del interruptor encendido/apagado.
+            // La pista encendida es un componente de interfaz, no texto, así
+            // que la exige WCAG 1.4.11 al 3:1 y no al 4.5:1. #667eea daba
+            // 3.66:1 contra el pulgar blanco, que igual pasaba, pero el
+            // gris apagado (#d0d0d0) daba solo 1.6:1: no se distinguía el
+            // interruptor apagado del fondo de la tarjeta, que es el
+            // estado en el que está la mayor parte del tiempo.
+            trackColor={{ false: '#767676', true: '#5a6fd0' }}
             thumbColor="#ffffff"
           />
         </View>

@@ -128,8 +128,11 @@ export default function PagedList({
             <TouchableOpacity
               key={f.valor}
               onPress={() => setFiltro(f.valor === filtro ? '' : f.valor)}
+              // Chip activo: fondo de marca y texto blanco encima, así que
+              // el color tiene que pasar 4.5:1. #667eea daba 3.66:1 con
+              // blanco, es decir el chip activo era el que peor se leía.
               style={{
-                backgroundColor: filtro === f.valor ? '#667eea' : '#e0e0e0',
+                backgroundColor: filtro === f.valor ? '#5a6fd0' : '#e0e0e0',
                 borderRadius: 20,
                 paddingHorizontal: 14,
                 paddingVertical: 8,
@@ -149,9 +152,10 @@ export default function PagedList({
       {/* Error global (si lo hay) */}
       {error ? <Text style={styles.error}>{error}</Text> : null}
 
-      {/* Mientras carga se muestra el indicador giratorio */}
+      {/* Mientras carga se muestra el indicador giratorio. El color es
+          gráfico, no texto, así que no le aplica el 4.5:1 de WCAG. */}
       {cargando ? (
-        <ActivityIndicator size="large" color="#667eea" style={{ marginTop: 30 }} />
+        <ActivityIndicator size="large" color="#5a6fd0" style={{ marginTop: 30 }} />
       ) : (
         <FlatList
           data={datos}
