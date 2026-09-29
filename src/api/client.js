@@ -75,8 +75,33 @@ export const api = async (path, { method = 'GET', body = null, params = null } =
 
     // Éxito: se devuelve el campo "data" de la respuesta estandar {ok, mensaje, data}.
     return datos.data;
+  } catch (err) {
+    // Traducción de los errores que NO vienen del backend.
+    //
+    // Sin este bloque, una caída de red o un timeout llegaban a la pantalla
+    // con el texto crudo de fetch ("Network request failed" o "Aborted"),
+    // que viene en inglés y no le dice a la persona usuaria qué hacer. El
+    // mensaje del backend ya está en español y se propaga sin tocar; acá solo
+    // se interceptan los fallos de la red, que no son del servidor.
+    if (err.name === 'AbortError') {
+      // Se traduce el "aborted" de fetch a un mensaje entendible. Ojo: este
+      // catch también ve los abort que dispara la propia pantalla al
+      // desmontarse. No se distingue un caso del otro porque no hace falta:
+      // en ambos la petición llegó tarde y el mensaje es el mismo.
+      throw new Error('La conexión tardó demasiado. Revisá tu red e intentá de nuevo.');
+    }
+    if (err.message === 'Network request failed' || err.name === 'TypeError') {
+      // fetch NO lanza un error propio cuando no hay red: falla la lectura y
+      // se manifiesta como TypeError. Sin este caso, quedarse sin conexión
+      // se leía como un error de servidor.
+      throw new Error('No se pudo conectar con el servidor. Revisá tu conexión a internet.');
+    }
+    throw err;
   } finally {
     // Siempre se cancela el timer del timeout para no dejar timers colgados.
+    // Va en finally y no después del try: si el try lanza, sin el finally el
+    // timer quedaría vivo hasta completar TIMEOUT_MS aunque la petición ya
+    // terminó, y en una lista que recarga seguido se acumulan timers.
     clearTimeout(timer);
   }
 };
