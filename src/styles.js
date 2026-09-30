@@ -1,74 +1,97 @@
 // ============================================================
 // styles.js - Estilos compartidos de la app móvil
 // ============================================================
-// Paleta y estilos reutilizables por todas las pantallas para
-// mantener la identidad visual de SaludWEB (mismos colores que el Web).
+// Paleta y estilos reutilizables por todas las pantallas, para que la
+// identidad visual de SaludWEB sea la misma en el móvil y en la web.
+//
+// UNA PALETA, ESCRITA A MANO EN LOS DOS LADOS. React Native no lee
+// custom properties de CSS: no hay var(--primario) ni un archivo de tokens
+// que se pueda importar. Por eso los hex van escritos acá y también están
+// escritos en SaludWEB_Web/src/tokens.css, y el trabajo de mantenerlos
+// iguales es manual. Cuando se cambia un color hay que cambiarlo en los
+// dos repos, o se rompe la paridad. Los valores que deben coincidir son
+// los que aparecen al pie de este archivo.
+//
+// Los comentarios de cada bloque explican POR QUÉ se eligió el valor. Los
+// que repiten lo que ya dice la propiedad (un "flex: 1" con un "ocupa todo
+// el alto" al lado) se omiten a propósito: no aportan nada, se desactualizan
+// apenas el valor cambia y tapan la decisión que sí importa, que es por qué
+// ese valor y no otro.
 import { StyleSheet } from 'react-native';
 
 // Objeto de estilos exportado; se usa con styles.nombre en el código.
 export const styles = StyleSheet.create({
-  // Contenedor base de todas las pantallas (fondo claro con relleno).
+  // Contenedor base de todas las pantallas.
   contenedor: {
-    flex: 1,            // Ocupa todo el alto disponible de la pantalla
-    backgroundColor: '#f5f5f5', // Fondo gris muy claro (igual que el Web)
-    padding: 16,        // Relleno interno alrededor del contenido
+    flex: 1,
+    // Fondo de la app. El gris muy claro hace que las tarjetas blancas se
+    // lean como superficies encima y no como texto perdido en un fondo liso.
+    backgroundColor: '#f5f5f5',
+    padding: 16,
   },
-  // Tarjeta blanca con esquinas redondeadas (se usa en formularios y listados).
+  // Tarjeta blanca con esquinas redondeadas (formularios y listados).
   tarjeta: {
-    backgroundColor: '#ffffff', // Fondo blanco que destaca sobre el gris
-    borderRadius: 12,           // Esquinas redondeadas
-    padding: 16,                // Relleno interno
-    marginBottom: 12,           // Separación entre tarjetas
-    shadowColor: '#000',        // Color de la sombra
-    shadowOpacity: 0.05,        // Sombra muy suave
-    shadowRadius: 8,            // Radio de desenfoque de la sombra
-    elevation: 2,               // Sombra en Android
+    backgroundColor: '#ffffff',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 12,
+    // shadowColor/Opacity/Radius son la sombra en iOS; elevation es el
+    // mismo efecto en Android. React Native NO unifica los dos: la sombra
+    // solo aparece si se declaran los tres primeros, y en Android solo
+    // si se declara elevation. Por eso van los dos, y no es repetición.
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
   },
   // Título principal de cada pantalla.
   titulo: {
-    fontSize: 22,       // Tamaño de letra grande
-    fontWeight: '700',  // Negrita
-    color: '#333',      // Gris oscuro legible
-    marginBottom: 12,   // Separación con el contenido siguiente
+    fontSize: 22,
+    fontWeight: '700',
+    color: '#333', // 12.63:1 sobre la tarjeta blanca.
+    marginBottom: 12,
   },
   // Contenedor de la cabecera del login (marca + subtítulo centrados).
   tituloWrapper: {
-    alignItems: 'center', // Centra los textos horizontalmente
-    marginBottom: 20,     // Separación con la tarjeta del formulario
+    alignItems: 'center',
+    marginBottom: 20,
   },
   // Etiqueta de los campos del formulario.
   label: {
     fontSize: 16,         // 16px: mínimo recomendado para mobile (guía: legibilidad)
     fontWeight: '600',    // Seminegrita
     color: '#333',        // Gris oscuro (contraste > 7:1 sobre blanco, WCAG AA)
-    marginBottom: 6,      // Separación con el input
+  marginBottom: 6,
   },
   // Caja de texto/select del formulario.
   input: {
-    borderWidth: 2,          // Borde visible
-    borderColor: '#e0e0e0',  // Borde gris claro
-    borderRadius: 8,         // Esquinas redondeadas
-    padding: 12,             // Relleno interno cómodo (alto táctil >= 44px)
+  borderWidth: 2,
+  borderColor: '#e0e0e0',
+  borderRadius: 8,
+  padding: 12,
     minHeight: 44,           // Altura táctil mínima recomendada (guía: 44x44)
     fontSize: 16,            // 16px: mínimo recomendado para leer en mobile
-    backgroundColor: '#fff', // Fondo blanco
-    marginBottom: 12,        // Separación entre campos
+  backgroundColor: '#fff',
+  marginBottom: 12,
   },
-  // Botón principal (degradado igual al Web: .btn-primary).
+  // Botón principal. Usa el mismo violeta que el Web.
+  // Antes era #667eea, que con el texto blanco daba 3.66:1 y quedaba
+  // fuera de AA. Pasa a #5a6fd0, que da 4.55:1: es el mismo color de
+  // marca, un punto más oscuro, y ahora sí se lee.
   botonPrimario: {
-    backgroundColor: '#667eea', // Azul índigo base del degradado
+    backgroundColor: '#5a6fd0', // Violeta de marca, verificado a 4.55:1 con blanco
     minHeight: 48,              // Target táctil alto: supera el mínimo 44px (guía)
-    justifyContent: 'center',   // Centra el contenido verticalmente
-    padding: 14,                // Relleno táctil
-    borderRadius: 8,            // Esquinas redondeadas
-    alignItems: 'center',       // Centra el texto del botón
-    marginBottom: 12,           // Separación inferior
+  justifyContent: 'center',
+  padding: 14,
+  borderRadius: 8,
+  alignItems: 'center',
+  marginBottom: 12,
   },
   // Texto del botón primario.
   botonPrimarioTexto: {
     color: '#fff',      // Texto blanco (contrasta con el fondo)
     fontWeight: '600',  // Seminegrita
-    fontSize: 16,       // Tamaño legible para el pulgar
+  fontSize: 16,
   },
   // Botón primario atenuado (estado "deshabilitado" del candado biométrico).
   botonPrimarioOscurecido: {
@@ -76,21 +99,22 @@ export const styles = StyleSheet.create({
   },
   // Botón de navegación secundario (paginación, volver).
   botonSecundario: {
-    backgroundColor: '#e0e0e0', // Fondo gris claro
+  backgroundColor: '#e0e0e0',
     minHeight: 44,              // Altura táctil mínima recomendada 44px (guía)
-    justifyContent: 'center',   // Centra el contenido verticalmente
-    padding: 10,                // Relleno
-    borderRadius: 8,            // Esquinas redondeadas
-    alignItems: 'center',       // Centra el texto
+  justifyContent: 'center',
+  padding: 10,
+  borderRadius: 8,
+  alignItems: 'center',
   },
-  // Botón de peligro (deshabilitado en esta versión de solo-consulta).
+  // Botón de peligro (borrado). El rojo era #ef4444, que con el texto
+  // blanco daba 3.76:1. Pasa a #b3261e, que da 6.54:1.
   botonPeligro: {
-    backgroundColor: '#ef4444', // Rojo (mismo .btn-danger del Web)
+    backgroundColor: '#b3261e', // Rojo de peligro, verificado a 6.54:1 con blanco
     minHeight: 44,              // Altura táctil mínima recomendada 44px (guía)
-    justifyContent: 'center',   // Centra el contenido verticalmente
-    padding: 10,                // Relleno
-    borderRadius: 8,            // Esquinas redondeadas
-    alignItems: 'center',       // Centra el texto
+  justifyContent: 'center',
+  padding: 10,
+  borderRadius: 8,
+  alignItems: 'center',
   },
   // Texto común de la app.
   texto: {
@@ -100,26 +124,26 @@ export const styles = StyleSheet.create({
   // Mensaje de error (rojo, igual que .alert-error del Web).
   error: {
     color: '#991b1b',      // Texto rojo oscuro
-    backgroundColor: '#fef2f2', // Fondo rojo clarísimo
-    padding: 10,           // Relleno
-    borderRadius: 8,       // Esquinas redondeadas
-    marginBottom: 12,      // Separación con el contenido siguiente
-    borderWidth: 2,        // Borde visible
-    borderColor: '#fca5a5',// Borde rojo suave
+  backgroundColor: '#fef2f2',
+  padding: 10,
+  borderRadius: 8,
+  marginBottom: 12,
+  borderWidth: 2,
+  borderColor: '#fca5a5',
   },
   // Fila de la lista (cada registro del listado).
   fila: {
     flexDirection: 'row',      // Elementos en horizontal
     justifyContent: 'space-between', // Texto a izquierda, valor a derecha
-    paddingVertical: 8,        // Relleno vertical cómodo
+  paddingVertical: 8,
     borderBottomWidth: 1,      // Línea separadora fina
-    borderBottomColor: '#e0e0e0', // Color de la línea
+  borderBottomColor: '#e0e0e0',
   },
   // Etiqueta de una fila de listado.
   filaLabel: {
     fontSize: 16,     // 16px: legibilidad en mobile (guía)
     color: '#555',    // Gris medio: cumple contraste WCAG AA (>= 4.5:1) sobre blanco
-    flex: 1,          // Ocupa el espacio disponible
+  flex: 1,
   },
   // Valor de una fila de listado.
   filaValor: {
@@ -134,24 +158,25 @@ export const styles = StyleSheet.create({
   // Barra de navegación inferior fija (Bottom Navigation Bar).
   barraNavegacion: {
     flexDirection: 'row',        // Ítems en horizontal
-    backgroundColor: '#ffffff',  // Fondo blanco
-    borderTopWidth: 1,           // Separador superior fino
-    borderTopColor: '#e0e0e0',   // Color del separador
-    paddingVertical: 6,          // Relleno vertical del contenedor
-    paddingHorizontal: 4,        // Relleno horizontal del contenedor
+  backgroundColor: '#ffffff',
+  borderTopWidth: 1,
+  borderTopColor: '#e0e0e0',
+  paddingVertical: 6,
+  paddingHorizontal: 4,
   },
   // Cada ítem de la barra inferior (zona natural del pulgar).
   navItem: {
     flex: 1,                     // Reparte el ancho en partes iguales
-    alignItems: 'center',        // Centra ícono + etiqueta
-    justifyContent: 'center',    // Centrado vertical
+  alignItems: 'center',
+  justifyContent: 'center',
     minHeight: 44,               // Altura táctil mínima 44px (guía)
-    paddingVertical: 4,          // Relleno interno
+  paddingVertical: 4,
   },
   // Etiqueta del ítem activo (resaltado en el color de la marca).
   navActivo: {
     fontSize: 12,                // Etiqueta compacta
-    color: '#667eea',            // Azul índigo (ítem seleccionado)
+    color: '#5a6fd0',            // Violeta de marca: 4.55:1 sobre blanco.
+                                  // Antes #667eea daba 3.66:1 y no pasaba AA.
     fontWeight: '700',           // Negrita
   },
   // Etiqueta del ítem inactivo.
@@ -163,29 +188,29 @@ export const styles = StyleSheet.create({
   // Contenedor en fila del campo contraseña con botón mostrar/ocultar.
   contrasenaWrapper: {
     flexDirection: 'row',        // Input + botón en horizontal
-    alignItems: 'center',        // Centrado vertical
-    borderWidth: 2,              // Borde igual que el input normal
-    borderColor: '#e0e0e0',      // Borde gris claro
-    borderRadius: 8,             // Esquinas redondeadas
-    backgroundColor: '#fff',     // Fondo blanco
-    marginBottom: 12,            // Separación con el siguiente campo
+  alignItems: 'center',
+  borderWidth: 2,
+  borderColor: '#e0e0e0',
+  borderRadius: 8,
+  backgroundColor: '#fff',
+  marginBottom: 12,
   },
   // Botón mostrar/ocultar contraseña (toggle ocular).
   botonMostrar: {
-    paddingHorizontal: 12,       // Relleno lateral cómodo
+  paddingHorizontal: 12,
     minHeight: 44,               // Altura táctil mínima 44px (guía)
-    justifyContent: 'center',    // Centra el ícono verticalmente
+  justifyContent: 'center',
   },
   // Ícono del botón mostrar/ocultar.
   botonMostrarTexto: {
-    fontSize: 18,                // Tamaño del ícono
+  fontSize: 18,
   },
   // Mensaje de error específico de un campo (validación onBlur).
   errorCampo: {
     color: '#991b1b',            // Texto rojo oscuro (contraste alto)
-    fontSize: 14,                // Tamaño de ayuda
+  fontSize: 14,
     marginTop: -6,               // Se acerca al campo para asociarse visualmente
-    marginBottom: 12,            // Separación con el siguiente elemento
+  marginBottom: 12,
   },
 
   // --- Estilos nuevos del CRUD completo (alta/edición/baja desde mobile) ---
@@ -193,23 +218,26 @@ export const styles = StyleSheet.create({
   // Banner de éxito (verde): feedback positivo tras guardar o eliminar.
   exito: {
     color: '#166534',                // Texto verde oscuro (contraste alto)
-    backgroundColor: '#dcfce7',      // Fondo verde muy claro
-    padding: 10,                     // Relleno del banner
-    borderRadius: 8,                 // Esquinas redondeadas
-    marginBottom: 12,                // Separación con el contenido siguiente
-    borderWidth: 2,                  // Borde visible
-    borderColor: '#86efac',          // Borde verde suave
+  backgroundColor: '#dcfce7',
+  padding: 10,
+  borderRadius: 8,
+  marginBottom: 12,
+  borderWidth: 2,
+  borderColor: '#86efac',
   },
 
   // Botón verde "Nuevo" (alta de registros) al tope del listado.
+  // El verde era #22c55e y con el texto blanco daba 2.28:1, el peor
+  // contraste de toda la app: el botón que crea un registro era el que
+  // menos se leía. Pasa a #166534, que da 7.13:1.
   botonNuevo: {
-    backgroundColor: '#22c55e',      // Verde de éxito (acción de crear)
+    backgroundColor: '#166534',
     minHeight: 48,                   // Altura táctil superior al mínimo 44px (guía)
-    justifyContent: 'center',        // Centra el contenido verticalmente
-    alignItems: 'center',            // Centra el texto
-    borderRadius: 8,                 // Esquinas redondeadas
-    padding: 14,                     // Relleno táctil cómodo
-    marginBottom: 12,                // Separación con el buscador/lista
+  justifyContent: 'center',
+  alignItems: 'center',
+  borderRadius: 8,
+  padding: 14,
+  marginBottom: 12,
   },
   // Texto del botón "Nuevo".
   botonNuevoTexto: {
@@ -221,49 +249,49 @@ export const styles = StyleSheet.create({
   // Botón pequeño de acción dentro de una tarjeta (Editar/Eliminar/Estado).
   botonAccion: {
     minHeight: 44,                   // Target táctil mínimo 44px (guía)
-    justifyContent: 'center',        // Centra el contenido verticalmente
-    alignItems: 'center',            // Centra el texto
-    borderRadius: 8,                 // Esquinas redondeadas
-    paddingHorizontal: 12,           // Relleno lateral cómodo
-    paddingVertical: 8,              // Relleno vertical
-    marginRight: 8,                  // Separación entre botones de acciones
+  justifyContent: 'center',
+  alignItems: 'center',
+  borderRadius: 8,
+  paddingHorizontal: 12,
+  paddingVertical: 8,
+  marginRight: 8,
   },
   // Variante visual de "Editar" (fondo índigo muy claro).
   botonAccionClaro: {
-    backgroundColor: '#e0e7ff',      // Fondo índigo claro
+  backgroundColor: '#e0e7ff',
   },
   // Variante visual de "Eliminar" (fondo rojo muy claro).
   botonAccionPeligro: {
-    backgroundColor: '#fee2e2',      // Fondo rojo claro
+  backgroundColor: '#fee2e2',
   },
   // Texto índigo de las acciones "positivas" (Editar/Estado).
   textoAccion: {
     color: '#4338ca',                // Índigo oscuro (contraste alto)
     fontWeight: '600',               // Seminegrita
-    fontSize: 14,                    // Tamaño legible del botón
+  fontSize: 14,
   },
   // Texto rojo de "Eliminar" (comunica peligro visualmente).
   textoAccionPeligro: {
     color: '#b91c1c',                // Rojo oscuro (contraste alto)
     fontWeight: '600',               // Seminegrita
-    fontSize: 14,                    // Tamaño legible del botón
+  fontSize: 14,
   },
   // Fila horizontal que contiene los botones de acción de una tarjeta.
   pieAcciones: {
     flexDirection: 'row',            // Botones en horizontal
     justifyContent: 'flex-end',      // Alineados a la derecha de la tarjeta
-    marginTop: 10,                   // Separación con los datos del registro
+  marginTop: 10,
   },
 
   // Pie FIJO de los formularios: acciones siempre visibles junto al pulgar
   // (punto "Pies fijos de formularios" de la guía de adaptación a mobile).
   pieFormulario: {
-    backgroundColor: '#ffffff',      // Fondo blanco (igual al Web)
+  backgroundColor: '#ffffff',
     borderTopWidth: 1,               // Línea separadora superior
-    borderTopColor: '#e0e0e0',       // Color de la línea
-    padding: 12,                     // Relleno del pie
+  borderTopColor: '#e0e0e0',
+  padding: 12,
     flexDirection: 'row',            // Botones lado a lado
-    gap: 8,                          // Separación entre los dos botones
+  gap: 8,
   },
   // Botón que ocupa la mitad del ancho del pie (Cancelar / Guardar).
   botonMitad: {
@@ -279,58 +307,64 @@ export const styles = StyleSheet.create({
   // Fila de un medicamento dinámico dentro de la prescripción.
   filaMedicamento: {
     flexDirection: 'row',            // Nombre + dosis + botón quitar en horizontal
-    alignItems: 'center',            // Centrado vertical de los tres elementos
-    marginBottom: 8,                 // Separación entre filas de medicamentos
+  alignItems: 'center',
+  marginBottom: 8,
   },
   // Campo "nombre" del medicamento (ocupa más ancho).
   campoMedicamentoNombre: {
     flex: 3,                         // Proporción 3/5 del ancho
-    marginRight: 8,                  // Separación con el campo dosis
+  marginRight: 8,
     marginBottom: 0,                 // Anula el margen del input por defecto
   },
   // Campo "dosis" del medicamento (más angosto).
   campoMedicamentoDosis: {
     flex: 2,                         // Proporción 2/5 del ancho
-    marginRight: 8,                  // Separación con el botón quitar
+  marginRight: 8,
     marginBottom: 0,                 // Anula el margen del input por defecto
   },
   // Botón para quitar un medicamento de la lista dinámica.
   botonQuitar: {
     minHeight: 44,                   // Target táctil mínimo 44px (guía)
-    justifyContent: 'center',        // Centra el ícono verticalmente
-    alignItems: 'center',            // Centra el ícono horizontalmente
-    paddingHorizontal: 8,            // Relleno lateral cómodo
+  justifyContent: 'center',
+  alignItems: 'center',
+  paddingHorizontal: 8,
   },
   // Texto de ayuda bajo un campo (explica el formato esperado).
   ayuda: {
-    fontSize: 14,                    // Tamaño de ayuda
-    color: '#777',                   // Gris medio (accesible como texto secundario)
+  fontSize: 14,
+    color: '#6e6e6e',               // 4.68:1 sobre #f5f5f5, el fondo real de
+                                    // las tarjetas. Antes era #777, que daba
+                                    // 4.11:1 y no llegaba a 4.5:1.
     marginTop: -6,                   // Se acerca al campo al que ayuda
-    marginBottom: 12,                // Separación con el siguiente elemento
+  marginBottom: 12,
   },
   // Fila separadora "o continuá con..." de la sección de SSO.
   separadorSso: {
     flexDirection: 'row',            // Línea - texto - línea en horizontal
     alignItems: 'center',            // Alinea el texto con las líneas
-    marginVertical: 8,               // Separación con el botón superior e inferior
+  marginVertical: 8,
   },
   // Línea del separador de SSO.
   lineaSso: {
-    flex: 1,               // Ocupa el espacio disponible a cada lado del texto
-    height: 1,             // Alto de 1px (línea fina)
+  flex: 1,
+  height: 1,
     backgroundColor: '#e0e0e0', // Gris claro, sutil
   },
   // Botón de acceso SSO (Google / Microsoft).
   botonSso: {
-    backgroundColor: '#fff', // Fondo blanco (contraste con el degradado principal)
-    borderWidth: 1,          // Borde visible finito
-    borderColor: '#d0d0d0',  // Gris medio del borde
+  backgroundColor: '#fff',
+  borderWidth: 1,
+    // El borde es lo único que separa este botón blanco del fondo
+    // degradado de la pantalla, así que es un componente de interfaz y
+    // WCAG 1.4.11 le exige 3:1. #d0d0d0 daba 1.5:1 contra el blanco: en
+    // la práctica el botón se veía como un hueco sin borde.
+    borderColor: '#767676',
     minHeight: 48,           // Target táctil alto: supera el mínimo 44px (guía)
-    justifyContent: 'center',// Centra el contenido verticalmente
-    padding: 14,             // Relleno táctil cómodo
-    borderRadius: 8,         // Esquinas redondeadas
-    alignItems: 'center',    // Centra el texto
-    marginBottom: 12,        // Separación con el siguiente elemento
+  justifyContent: 'center',
+  padding: 14,
+  borderRadius: 8,
+  alignItems: 'center',
+  marginBottom: 12,
   },
   // Texto del botón de acceso SSO.
   botonSsoTexto: {

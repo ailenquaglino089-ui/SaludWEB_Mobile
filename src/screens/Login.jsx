@@ -168,9 +168,20 @@ export default function Login() {
         contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', paddingVertical: 20 }}
         keyboardShouldPersistTaps="handled"
       >
-        {/* Cabecera de bienvenida con la marca de la app */}
+        {/* Cabecera de bienvenida con la marca de la app.
+            El título lleva el violeta de marca COMO TEXTO, y el fondo de
+            esta pantalla es #f5f5f5, NO blanco: sobre blanco #5a6fd0 da
+            4.55:1 y pasa, pero sobre el gris de la pantalla da 4.17:1 y
+            no llega a 4.5:1. Por eso este título usa un paso más
+            oscuro, #5669c6, que da 4.55:1 sobre el gris real y 4.96:1
+            sobre blanco.
+
+            La diferencia con la barra de navegación (que sí va sobre
+            blanco) es deliberada: un mismo color de marca sobre dos
+            fondos distintos necesita dos valores, o uno de los dos
+            queda por debajo del mínimo. */}
         <View style={styles.tituloWrapper}>
-          <Text style={{ fontSize: 28, fontWeight: '700', textAlign: 'center', color: '#667eea' }}>
+          <Text style={{ fontSize: 28, fontWeight: '700', textAlign: 'center', color: '#5669c6' }}>
             🏥 SaludWEB
           </Text>
           <Text style={[styles.texto, { textAlign: 'center' }]}>Sistema de Gestión de Salud</Text>

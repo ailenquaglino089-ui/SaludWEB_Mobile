@@ -67,6 +67,16 @@ npm start            # levanta Expo Go / emulador
 
 ### Credenciales de prueba
 
-- Admin: `admin@prueba.com` / `admin123`
+- Administradora: `admin@salud.com` (su contraseña es personal, no está acá)
 - Médico: `medico@prueba.com` / `medico123`
 - Paciente: `paciente@prueba.com` / `paciente123`
+
+> La cuenta administradora quedó como la única con ese rol. Antes había tres
+> cuentas de prueba con permisos de administrador, lo que hacía que la pantalla
+> de usuarios mostrara varias filas indistinguibles y que las pruebas
+> automáticas tuvieran que dependir de una clave fija. Ahora las pruebas crean
+> su propia cuenta temporal y la borran al terminar, así que no necesitan
+> ninguna credencial de la base.
+
+Para volver a dejar los datos de demostración como estaban, en el backend:
+`php sembrar_datos_demo.php`. Ese script no toca ninguna contraseña.
