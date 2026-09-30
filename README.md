@@ -19,6 +19,9 @@ aplicada y comentada **línea por línea** en `GUIA_MOBILE.md`.
 - ✅ **CRUD completo** (alta/edición/baja) en flujo único por módulo: formularios con
   pie fijo de Confirmar/Cancelar, confirmación de borrado y cambio de estado de
   prescripciones, todo con gating por rol.
+- ✅ **Rol propio visible**: el Dashboard muestra el rol de la sesión (admin / médico /
+  paciente) con su etiqueta y emoji, tomado de `tipo_usuario` que devuelve
+  `/api/auth/me`; toda la navegación se adapta a ese rol.
 - ✅ **Permisos por rol** (mismas reglas que el backend):
   - Pacientes y médicos: crear/editar/eliminar → **admin**.
   - Prescripciones: crear/editar → **médico**; cambiar estado → **cualquier rol**;
@@ -80,3 +83,14 @@ npm start            # levanta Expo Go / emulador
 
 Para volver a dejar los datos de demostración como estaban, en el backend:
 `php sembrar_datos_demo.php`. Ese script no toca ninguna contraseña.
+
+## Pasos y verificación
+
+- Todo el avance, los pasos y las decisiones (F1 a F4) están registrados en la
+  [AGENDA de trabajo del Backend](../SaludWEB_Backend/AGENDA_DE_TRABAJO.md) y en el
+  [PROJECT_BRIEF](../SaludWEB_Backend/PROJECT_BRIEF.md).
+- El backend trae sus propias suites de pruebas (`probar_roles.php`,
+  `probar_vinculacion.php`, `probar_turnera.php`); la app móvil usa la **misma API**,
+  así que las reglas verificadas ahí valen para esta app.
+- La verificación en emulador/dispositivo real queda agendada en la fase **E3**
+  (05–06/10): instalación con Expo Go, login, biometría y SSO contra el backend local.
