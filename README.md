@@ -47,6 +47,23 @@ aplicada y comentada **línea por línea** en `GUIA_MOBILE.md`.
 > mantiene es el mismo contrato: el backend sigue siendo la única fuente de verdad y esta
 > app consume los mismos endpoints REST.
 
+### Qué haría falta para llevarlo a mobile
+
+Como está implementado en la Web, el camino en mobile es este. **Ninguno de estos pasos está
+hecho**, se anota para dejar la decisión registrada:
+
+1. **Elegir el transporte**: en React Native no hay `EventSource`, así que el canal se
+   consumiría con una librería como `react-native-sse`, o se reemplazaría por
+   WebSocket (`socket.io`), que además permitiría enviar mensajes del cliente.
+2. **Reutilizar el backend tal cual**: las rutas `/api/eventos`, los canales y la
+   autorización por rol ya están. Solo habría que decidir si el token viaja en la query
+   (como en la Web) o en una cabecera, porque las librerías móviles sí permiten cabeceras y
+   eso sería más seguro.
+3. **Sustituir el polling de las pantallas**: el mismo patrón que se aplicó en el
+   `Dashboard` web — carga inicial por REST y refresco solo cuando llega un aviso.
+4. **Probarlo igual que en la Web**: la suite `verificar_tiempo_real.mjs` cubre la lógica
+   de canal y autorización, pero el consumo desde mobile necesita su propia prueba.
+
 ## Contenido
 
 - `App.js` — Punto de entrada y navegación por estado + barra inferior.
