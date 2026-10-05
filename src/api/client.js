@@ -5,6 +5,15 @@
 // manejo de errores y expulsión automática cuando el token no es válido (401).
 import { API_URL, TIMEOUT_MS } from '../config';
 
+import { actual as correlationId } from '../utils/correlationId.js';
+// Importa el identificador de correlación de la app (módulo "Trazabilidad")
+
+import * as logger from '../utils/logger.js';
+// Importa el logger estructurado (módulo "Logging"). Antes de este cambio,
+// cualquier fallo se traducía a un mensaje para la pantalla y se perdía: sin
+// registro, un error que el usuario reporta no tiene con qué compararse en el
+// log del servidor.
+
 // Variable privada que guarda el token JWT de la sesión activa.
 let token = null;
 
@@ -42,6 +51,11 @@ export const api = async (path, { method = 'GET', body = null, params = null } =
   const headers = { 'Content-Type': 'application/json' };
   // Si hay sesión, se adjunta el token con el esquema "Bearer <token>".
   if (token) headers['Authorization'] = `Bearer ${token}`;
+  // Identificador de la petición. El backend lo copia en todas sus líneas de
+  // log, así que un error reportado desde el teléfono se localiza con una
+  // búsqueda en lugar de depender de la memoria de quien lo reporta. El logger
+  // redacta el token si alguna vez se lo pasa, así que esto no filtra nada.
+  headers['X-Correlation-Id'] = correlationId();
 
   // AbortController permite cancelar la petición si pasa el tiempo límite.
   const controller = new AbortController();
@@ -63,6 +77,15 @@ export const api = async (path, { method = 'GET', body = null, params = null } =
     // Si el backend responde 401, el token dejó de ser válido:
     // se informa a AuthContext para cerrar la sesión y volver al login.
     if (respuesta.status === 401 && onUnauthorized) {
+      // Se deja registro antes de cerrar sesión: cerrar sesión borra el token
+      // local, y sin esta línea el 401 más difícil de diagnosticar (el del
+      // primer fallo tras una caída de servidor) se quedaría sin rastro.
+      logger.warn('el servidor rechazó el token: se cierra la sesión', {
+        metodo: method,
+        ruta: path,
+        motivo: datos.mensaje || datos.error
+      });
+
       onUnauthorized();
     }
 
@@ -70,6 +93,17 @@ export const api = async (path, { method = 'GET', body = null, params = null } =
     if (!respuesta.ok) {
       // El backend usa {mensaje} en errores de negocio y {error} en fallos internos.
       const msg = datos.mensaje || datos.error || `Error ${respuesta.status}`;
+
+      // Se registra el rechazo con método, ruta y estado. No se pasa el cuerpo
+      // completo: puede traer datos de otros pacientes, y el log no es el lugar
+      // para eso.
+      logger.error('la API rechazó la petición', {
+        metodo: method,
+        ruta: path,
+        estado: respuesta.status,
+        motivo: msg
+      });
+
       throw new Error(msg);
     }
 
@@ -88,12 +122,23 @@ export const api = async (path, { method = 'GET', body = null, params = null } =
       // catch también ve los abort que dispara la propia pantalla al
       // desmontarse. No se distingue un caso del otro porque no hace falta:
       // en ambos la petición llegó tarde y el mensaje es el mismo.
+      logger.warn('la petición se canceló por tiempo de espera', {
+        metodo: method,
+        ruta: path
+      });
+
       throw new Error('La conexión tardó demasiado. Revisá tu red e intentá de nuevo.');
     }
     if (err.message === 'Network request failed' || err.name === 'TypeError') {
       // fetch NO lanza un error propio cuando no hay red: falla la lectura y
       // se manifiesta como TypeError. Sin este caso, quedarse sin conexión
       // se leía como un error de servidor.
+      logger.warn('la petición no llegó al servidor', {
+        metodo: method,
+        ruta: path,
+        motivo: err.message
+      });
+
       throw new Error('No se pudo conectar con el servidor. Revisá tu conexión a internet.');
     }
     throw err;

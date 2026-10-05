@@ -117,3 +117,49 @@ Para volver a dejar los datos de demostración como estaban, en el backend:
   la **misma API**, así que las reglas verificadas ahí valen para esta app.
 - La verificación en emulador/dispositivo real queda agendada en la fase **E3**
   (05–06/10): instalación con Expo Go, login, biometría y SSO contra el backend local.
+
+## Calidad del software
+
+Aplicacion de "Calidad Profesional del Software": logging estructurado, identificador de
+correlacion de punta a punta con el backend y pruebas unitarias. El detalle completo esta en
+**`CALIDAD_PROFESIONAL_SOFTWARE.md`**.
+
+### Archivos nuevos
+
+| Archivo | Responsabilidad |
+|---|---|
+| `src/utils/correlationId.js` | Genera el `X-Correlation-Id` de la sesion. |
+| `src/utils/logger.js` | Logs en JSON con niveles, redaccion de secretos y correlacion. |
+| `src/utils/logger.test.js` | 15 pruebas del logger. |
+| `src/utils/correlationId.test.js` | 12 pruebas del identificador de correlacion. |
+
+`src/api/client.js` ahora envia el identificador en cada peticion y registra los fallos con
+metodo, ruta, estado y motivo.
+
+### Correr las pruebas
+
+```bash
+npm test            # 27 pruebas con el runner nativo de Node (sin dependencias nuevas)
+```
+
+No hacen falta el emulador, el telefono ni el backend: cubren el logger y el identificador de
+correlacion, que son los dos modulos que se pueden verificar de forma aislada.
+
+### Correlacion con el backend
+
+1. `client.js` manda `X-Correlation-Id` en cada peticion.
+2. El backend lo copia en todas sus lineas de log.
+3. Los errores de la app se registran con ese mismo identificador.
+
+Un error reportado desde un telefono se localiza buscando el identificador en los logs del
+servidor. El identificador se regenera al cerrar sesion, a proposito: dos sesiones distintas en
+el mismo dispositivo no deben quedar mezcladas en el mismo contexto.
+
+### Reglas fijadas
+
+- Ningun secreto en el log: la redaccion vive en el logger, no en las pantallas, para que no se
+  pueda olvidar.
+- El cuerpo completo de un error de la API no se registra: puede traer datos de otros
+  pacientes y el log no es el lugar para eso.
+- Cada nivel se escribe con el metodo de consola que le corresponde, para que el filtrado de
+  Metro y de las herramientas de desarrollo funcione.
