@@ -88,14 +88,53 @@ npm install
 npm start            # levanta Expo Go / emulador
 ```
 
-> Para probar contra el backend: en `src/config.js` usá `10.0.2.2` (emulador Android),
-> `localhost` (navegador) o la IP local del equipo (celular físico).
+> El backend tiene que estar corriendo (en `SaludWEB_Backend`: `composer run dev`,
+> en `http://127.0.0.1:8000`). En navegador alcanza con ese valor; en emulador
+> Android o celular físico ajustá la URL según la sección siguiente.
+
+### Variables de entorno (opcional)
+
+```bash
+copy .env.example .env
+```
+
+Expo (SDK 49 en adelante) inyecta en el bundle **solo** las variables que arrancan
+con `EXPO_PUBLIC_`, y `src/config.js` es el único archivo que las lee. **Si no creás
+el `.env`, la app funciona igual**, porque los defaults del código ya apuntan al
+backend nativo (`http://127.0.0.1:8000/api`).
+
+| Variable | Default | Qué controla |
+|---|---|---|
+| `EXPO_PUBLIC_API_URL` | `http://127.0.0.1:8000/api` | URL base de la API, **con `/api` final**. |
+| `EXPO_PUBLIC_TIMEOUT_MS` | `15000` | Milisegundos antes de cortar una petición que no responde. |
+| `EXPO_PUBLIC_POR_PAGINA` | `10` | Registros por página en los listados. |
+| `EXPO_PUBLIC_SSO_GOOGLE_CLIENT_ID` | *(vacío)* | Vacío = el botón de Google queda oculto. |
+| `EXPO_PUBLIC_SSO_MICROSOFT_CLIENT_ID` | *(vacío)* | Vacío = el botón de Microsoft queda oculto. |
+| `EXPO_PUBLIC_SSO_MICROSOFT_TENANT` | `common` | Tenant de Microsoft. |
+
+> Para probar contra el backend (nativo), según el dispositivo:
+> `10.0.2.2` (emulador Android), `127.0.0.1` (navegador) o la IP local del equipo
+> (celular físico). La URL es `http://127.0.0.1:8000/api` en navegador y
+> `http://<IP-de-tu-PC>:8000/api` en el celular.
+
+> **Si cambiás el `.env`, reiniciá Expo con `npm start --clear`.** El valor se
+> inyecta en el momento del empaquetado por Metro, no se lee en caliente: con el
+> servidor ya corriendo no se recarga solo.
+
+> **En Expo nunca van secretos.** Todo lo que empieza con `EXPO_PUBLIC_` queda
+> escrito dentro del JavaScript que baja el dispositivo y cualquiera puede leerlo.
+> Acá solo va lo que ya es público (URLs y Client IDs de OAuth). El secreto real de
+> la app es el `JWT_SECRET` del backend, y ese no sale del servidor.
 
 ### Credenciales de prueba
 
 - Administradora: `admin@salud.com` (su contraseña es personal, no está acá)
 - Médico: `medico@prueba.com` / `medico123`
 - Paciente: `paciente@prueba.com` / `paciente123`
+
+> Estas cuentas existen si migraste la base MySQL vieja. **En un clon nuevo no hay
+> ninguna**: creala primero desde la SPA (pantalla de Registro) o por `POST
+> /api/auth/registro` (ver el README del backend, sección "Primer acceso").
 
 > La cuenta administradora quedó como la única con ese rol. Antes había tres
 > cuentas de prueba con permisos de administrador, lo que hacía que la pantalla
@@ -117,6 +156,9 @@ Para volver a dejar los datos de demostración como estaban, en el backend:
   la **misma API**, así que las reglas verificadas ahí valen para esta app.
 - La verificación en emulador/dispositivo real queda agendada en la fase **E3**
   (05–06/10): instalación con Expo Go, login, biometría y SSO contra el backend local.
+- La revisión y prueba del proyecto (guía "de checklist a evidencia") está en
+  [`REVISAR_Y_PROBAR_EL_PROYECTO.md`](REVISAR_Y_PROBAR_EL_PROYECTO.md), con los entregables de
+  evidencia en `QA/`.
 
 ## Calidad del software
 
