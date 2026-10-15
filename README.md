@@ -80,6 +80,7 @@ hecho**, se anota para dejar la decisión registrada:
 - `src/api/client.js` — Cliente HTTP con token JWT, timeout y expulsión ante 401.
 - `src/styles.js` — Paleta y estilos compartidos (mismos colores que el Web).
 - `GUIA_MOBILE.md` — Guía de adaptación mobile comentada línea por línea + checklist.
+- `GUIA_DE_CODIGO.md` — El mapa del código, archivo por archivo: qué hace cada uno y con qué se conecta.
 
 ## Puesta en marcha
 
