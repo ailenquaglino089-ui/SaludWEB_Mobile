@@ -43,8 +43,7 @@ export default function FormularioPaciente({ inicial, onGuardado, onCancelar }) 
   // True mientras se guarda: bloquea botones y campos.
   const [cargando, setCargando] = useState(false);
 
-  // Al montar el formulario: se descarga el catálogo de obras sociales
-  // (ruta pública del backend, usada para poblar el Selector).
+  // Al montar el formulario: se descarga el catálogo de obras sociales (público)
   useEffect(() => {
     api('/obras-sociales')
       // mapea cada obra {id, nombre_obra} a la forma {valor, etiqueta} del Selector

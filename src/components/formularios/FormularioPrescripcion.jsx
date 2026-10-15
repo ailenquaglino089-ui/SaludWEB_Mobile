@@ -62,7 +62,7 @@ export default function FormularioPrescripcion({ inicial, onGuardado, onCancelar
   // True mientras se guarda: bloquea botones y campos.
   const [cargando, setCargando] = useState(false);
 
-  // En modo ALTA: al montar se descargan pacientes (ruta pública del backend)
+  // En modo ALTA: al montar se descargan pacientes (requieren token JWT)
   // para poder elegir a quién se prescribe.
   useEffect(() => {
     if (inicial) return; // En edición no hace falta el catálogo
