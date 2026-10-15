@@ -15,6 +15,14 @@
   casi igual a otro (por ejemplo `Pacientes.jsx` y `Medicos.jsx`), la explicación del
   primero sirve para los dos y la del segundo solo marca la diferencia.
 
+## Detalle línea por línea (por carpeta)
+
+El recorrido **línea por línea** de cada archivo está separado por carpeta en la carpeta [`GUIA_CODIGO/`](./GUIA_CODIGO/):
+
+- [`01_nucleo_api_utils.md`](./GUIA_CODIGO/01_nucleo_api_utils.md) — arranque y núcleo: `App.js`, `app.json`, `package.json`, `src/api`, `src/context`, `src/utils` y `src/styles`.
+- [`02_screens.md`](./GUIA_CODIGO/02_screens.md) — las pantallas (`src/screens/`): Login, Bloqueo, Dashboard, Pacientes, Medicos, Prescripciones y PagedList.
+- [`03_componentes_formularios.md`](./GUIA_CODIGO/03_componentes_formularios.md) — componentes reutilizables y formularios (`src/components/`).
+
 ## Arquitectura y flujo
 
 - Cómo arranca: `expo/AppEntry.js` (declarado como `main` en `package.json`) carga

@@ -1,0 +1,326 @@
+# Guía de código — Mobile · screens/
+
+> Recorrido línea por línea de las pantallas.
+> Índice general en ../GUIA_DE_CODIGO.md
+>
+> Nota de arquitectura: la app NO usa react-navigation. La navegación se resuelve por ESTADO en `App.js` (variable `pantalla` y componente `BottomNav`). Por eso las pantallas son componentes que NO reciben props de navegación y obtienen usuario/acciones desde `useAuth()` de `../context/AuthContext`. Los listados delegan el render de la lista en `PagedList`.
+
+## `src/screens/Login.jsx` (293 líneas)
+- **Rol:** Pantalla de inicio de sesión con validación en el cliente, toggle mostrar/ocultar contraseña y SSO (Google/Microsoft) vía `expo-auth-session`. La autenticación la delega al `AuthContext`.
+- **Recorrido línea por línea:**
+  - L1–L3: Comentario de cabecera: nombre del archivo y "Pantalla de inicio de sesión (optimizada para mobile)".
+  - L4–L13: Comentario-guía que declara los tres puntos aplicados: "Ajustar formularios", "Validar Login" y "Autenticación mobile-optimizada" (botones SSO mostrados solo si el proveedor está configurado en `src/config.js`).
+  - L14: `import React, { useState } from 'react';`.
+  - L15–L18: Import de componentes React Native: `View, Text, TextInput, TouchableOpacity, ActivityIndicator, KeyboardAvoidingView, Platform, ScrollView`.
+  - L19–L20: `import * as AuthSession from 'expo-auth-session';` (flujo OAuth en el navegador del sistema).
+  - L21–L22: `import { styles } from '../styles';` (estilos compartidos).
+  - L23–L24: `import { useAuth } from '../context/AuthContext';`.
+  - L25–L26: `import { SSO } from '../config';` (credenciales de SSO de Google y Microsoft).
+  - L27: Línea en blanco.
+  - L28–L29: `const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;`.
+  - L30–L35: `DESCUBRIMIENTO_GOOGLE` con `authorizationEndpoint: 'https://accounts.google.com/o/oauth2/v2/auth'`.
+  - L36–L39: `DESCUBRIMIENTO_MICROSOFT` con endpoint construido con `${SSO.microsoftTenant}`.
+  - L40: Línea en blanco.
+  - L41–L42: Comentario y `export default function Login()`.
+  - L43–L44: `const { login, loginSSO } = useAuth();`.
+  - L45–L48: Estado `email`/`setEmail` iniciado en `''`.
+  - L49–L50: Estado `verPassword`/`setVerPassword` iniciado en `false`.
+  - L51–L54: Estados `cargando`/`setCargando` y `cargandoSso`/`setCargandoSso`, ambos en `false`.
+  - L55–L58: Estados `error`/`setError` en `''` y `erroresCampo`/`setErroresCampo` en `{}`.
+  - L59: Línea en blanco.
+  - L60–L65: `validarEmail(valor)`: vacío devuelve 'El email es obligatorio'; si falla `EMAIL_REGEX` devuelve 'Ingresá un email válido'; si no devuelve `''`.
+  - L66: Línea en blanco.
+  - L67–L72: `validarPassword(valor)`: vacío devuelve 'La contraseña es obligatoria'; si no devuelve `''` (la longitud la valida el backend).
+  - L73: Línea en blanco.
+  - L74–L80: `validarCampoAlSalir(campo, valor)`: elige `validarEmail` o `validarPassword` y actualiza solo `erroresCampo[campo]` con `setErroresCampo((prev) => ({ ...prev, [campo]: mensaje }))`.
+  - L81: Línea en blanco.
+  - L82–L91: `validarFormulario()`: arma `nuevoError` con `email` y `password`, llama a `setErroresCampo(nuevoError)` y devuelve el primer mensaje con `nuevoError.email || nuevoError.password`.
+  - L92: Línea en blanco.
+  - L93–L100: `handleLogin` parte 1: comentario de envío; `const primerError = validarFormulario()`; si existe, `setError(primerError)` y `return` sin llamar a la API.
+  - L101–L115: `handleLogin` parte 2: `setCargando(true)`, `setError('')`, `await login(email, password)` dentro del `try`; `catch` con `setError(err.message || 'Error al iniciar sesión')`; `finally` con `setCargando(false)`.
+  - L116: Línea en blanco.
+  - L117–L119: Comentario y `const pedidoIdToken = (clientId) =>`.
+  - L120–L126: `new AuthSession.AuthRequest({ clientId, scopes: ['openid', 'profile', 'email'], redirectUri: AuthSession.makeRedirectUri(), responseType: AuthSession.ResponseType.IdToken, extraParams: { response_mode: 'fragment' } })`.
+  - L127: Línea en blanco.
+  - L128–L135: `iniciarSso` parte 1: `clientId` según `proveedor === 'google'`, `descubrimiento` según proveedor y `if (!clientId) return;`.
+  - L136–L141: `try`: `setCargandoSso(true)`, `setError('')` y `const resultado = await pedidoIdToken(clientId).promptAsync(descubrimiento)`.
+  - L142–L150: Si `resultado.type === 'success'` y `resultado.params?.id_token`, llama `await loginSSO(proveedor, resultado.params.id_token)`; si `resultado.type === 'error'`, `setError('No se pudo completar el acceso con ' + ...)`; el caso `cancel` no muestra error.
+  - L151–L157: `catch` con `setError(err.message || 'No se pudo iniciar sesión con SSO')`; `finally` con `setCargandoSso(false)`.
+  - L158: Línea en blanco.
+  - L159–L164: Comentario y `<KeyboardAvoidingView style={styles.contenedor} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>`.
+  - L165–L170: Comentario y `<ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', paddingVertical: 20 }} keyboardShouldPersistTaps="handled">`.
+  - L171–L182: Comentario largo sobre contraste que explica el uso de `#5669c6` para el título sobre el fondo `#f5f5f5`.
+  - L183–L188: `<View style={styles.tituloWrapper}>` con `<Text>` "🏥 SaludWEB" (fontSize 28, fontWeight '700', color `#5669c6`) y `<Text>` "Sistema de Gestión de Salud".
+  - L189: Línea en blanco.
+  - L190–L193: Comentario y `<View style={styles.tarjeta}>` con el error general: `{error ? <Text style={styles.error}>{error}</Text> : null}`.
+  - L194: Línea en blanco.
+  - L195–L196: Comentario y `<Text style={styles.label}>Email</Text>`.
+  - L197–L209: `<TextInput>` de email con `style={styles.input}`, `placeholder="tu@email.com"`, `value={email}`, `onChangeText={setEmail}`, `onBlur={() => validarCampoAlSalir('email', email)}`, `keyboardType="email-address"`, `autoCapitalize="none"`, `autoCorrect={false}`, `autoComplete="email"`, `textContentType="emailAddress"`, `editable={!cargando && !cargandoSso}`.
+  - L210–L211: Comentario y error específico: `{erroresCampo.email ? <Text style={styles.errorCampo}>{erroresCampo.email}</Text> : null}`.
+  - L212: Línea en blanco.
+  - L213–L214: Comentario y `<Text style={styles.label}>Contraseña</Text>`.
+  - L215–L216: Comentario y `<View style={styles.contrasenaWrapper}>`.
+  - L217–L227: `<TextInput>` de contraseña con `style={[styles.input, { flex: 1, borderWidth: 0, marginBottom: 0 }]}`, `placeholder="••••••••"`, `value={password}`, `onChangeText={setPassword}`, `onBlur={() => validarCampoAlSalir('password', password)}`, `secureTextEntry={!verPassword}`, `autoComplete="password"`, `textContentType="password"`, `editable={!cargando && !cargandoSso}`.
+  - L228–L236: Comentario y `<TouchableOpacity onPress={() => setVerPassword(!verPassword)} style={styles.botonMostrar} accessibilityRole="button" accessibilityLabel={...}>` con `<Text style={styles.botonMostrarTexto}>{verPassword ? '🙈' : '👁️'}</Text>`.
+  - L237–L239: Cierre `</View>` del wrapper y error específico `{erroresCampo.password ? ... : null}`.
+  - L240: Línea en blanco.
+  - L241–L252: `<TouchableOpacity style={styles.botonPrimario} onPress={handleLogin} disabled={cargando || cargandoSso}>` que renderiza `<ActivityIndicator color="#fff" />` si `cargando`, o `<Text style={styles.botonPrimarioTexto}>Iniciar Sesión</Text>`.
+  - L253: Línea en blanco.
+  - L254–L288: Sección SSO condicional `{(SSO.googleClientId || SSO.microsoftClientId) ? (...) : null}`: separador con dos `<View style={styles.lineaSso} />` y texto "o continuá con"; botón Google (si `SSO.googleClientId`) con `onPress={() => iniciarSso('google')}`; botón Microsoft (si `SSO.microsoftClientId`) con `onPress={() => iniciarSso('microsoft')}`; ambos usan `[styles.botonSso, (cargando || cargandoSso) && styles.botonPrimarioOscurecido]` y `disabled={cargando || cargandoSso}`.
+  - L289: `</View>` cierra la tarjeta.
+  - L290: `</ScrollView>`.
+  - L291: `</KeyboardAvoidingView>`.
+  - L292–L293: `);` y `}` cierran el componente.
+- **Se conecta con:** `src/context/AuthContext.jsx` (`login`, `loginSSO`), `src/config.js` (`SSO`), `src/styles.js`, `expo-auth-session` (flujo OAuth con `id_token` y `response_mode: 'fragment'`).
+
+## `src/screens/Bloqueo.jsx` (92 líneas)
+- **Rol:** Candado de la sesión restaurada. Pide desbloquear con biometría (huella/Face ID) antes de dejar entrar y ofrece "Usar otra cuenta" para cerrar sesión.
+- **Recorrido línea por línea:**
+  - L1–L7: Comentario de cabecera "Candado biométrico de la sesión guardada" y explicación de cuándo aparece (`AuthContext.desbloqueado=false`) y de la salida por "cambiar de cuenta".
+  - L8: `import React, { useEffect, useState } from 'react';`.
+  - L9: `import { View, Text, TouchableOpacity, ActivityIndicator } from 'react-native';`.
+  - L10–L11: `import { styles } from '../styles';`.
+  - L12–L13: `import { useAuth } from '../context/AuthContext';`.
+  - L14–L15: `import { autenticarBiometria, soporteBiometria } from '../utils/biometria';`.
+  - L16: Línea en blanco.
+  - L17–L18: Comentario y `export default function Bloqueo()`.
+  - L19–L20: `const { usuario, desbloquear, logout } = useAuth();`.
+  - L21–L22: Estado `validando`/`setValidando` en `false`.
+  - L23–L24: Estado `error`/`setError` en `''`.
+  - L25–L26: Estado `etiqueta`/`setEtiqueta` iniciado en `'biometría'`.
+  - L27: Línea en blanco.
+  - L28–L31: `useEffect(() => { soporteBiometria().then((s) => setEtiqueta(s.etiqueta)); }, []);`.
+  - L32: Línea en blanco.
+  - L33–L37: `intentarDesbloquear` parte 1: `setValidando(true)`, `setError('')`.
+  - L38–L39: `const ok = await autenticarBiometria(...)` con mensaje `Desbloqueá SaludWEB, ${usuario?.nombre || ''}`.
+  - L40–L44: Si `ok`, llama `desbloquear()` y `return`.
+  - L45–L48: Si no, `setError(\`No se pudo validar tu ${etiqueta}...\`)` y `setValidando(false)`.
+  - L49: Línea en blanco.
+  - L50–L53: `usarOtraCuenta` con comentario y `await logout();`.
+  - L54: Línea en blanco.
+  - L55–L56: `return` y `<View style={styles.contenedor}>`.
+  - L57–L58: Comentario y `<View style={styles.tarjeta}>`.
+  - L59–L60: Comentario y `<Text style={styles.titulo}>🔐 Sesión bloqueada</Text>`.
+  - L61–L65: Comentario y `<Text style={styles.texto}>` que saluda con `usuario?.nombre || 'Usuario'` y menciona `{etiqueta}`.
+  - L66: Línea en blanco.
+  - L67–L73: Comentario y `<TouchableOpacity style={[styles.botonPrimario, validando && styles.botonPrimarioOscurecido]} onPress={intentarDesbloquear} disabled={validando} accessibilityLabel={\`Desbloquear con ${etiqueta}\`}>`.
+  - L74–L79: Comentario y contenido: `<ActivityIndicator color="#ffffff" />` si `validando`, o `<Text style={styles.botonPrimarioTexto}>🔓 Desbloquear</Text>`.
+  - L80: `</TouchableOpacity>`.
+  - L81: Línea en blanco.
+  - L82–L83: Comentario y error condicional `{error ? <Text style={styles.error}>{error}</Text> : null}`.
+  - L84: `</View>` cierra la tarjeta.
+  - L85: Línea en blanco.
+  - L86–L89: Comentario y `<TouchableOpacity style={styles.botonSecundario} onPress={usarOtraCuenta}>` con `<Text style={styles.textoAccion}>Usar otra cuenta</Text>`.
+  - L90–L92: `</View>`, `);` y `}` cierran el componente.
+- **Se conecta con:** `src/context/AuthContext.jsx` (`usuario`, `desbloquear`, `logout`), `src/utils/biometria.js` (`autenticarBiometria`, `soporteBiometria`), `src/styles.js`.
+
+## `src/screens/Dashboard.jsx` (107 líneas)
+- **Rol:** Panel inicial. Saluda al usuario con su rol y ofrece un único atajo de seguridad: activar/desactivar "Proteger con huella". La navegación a módulos vive en `BottomNav` (App.js), no aquí.
+- **Recorrido línea por línea:**
+  - L1–L7: Comentario de cabecera "Panel inicial con datos del usuario" y explicación de la "Simplificación radical del menú principal" (navegación movida a `BottomNav`).
+  - L8: `import React, { useEffect, useState } from 'react';`.
+  - L9: `import { View, Text, Switch } from 'react-native';`.
+  - L10–L11: `import { styles } from '../styles';`.
+  - L12–L13: `import { useAuth } from '../context/AuthContext';`.
+  - L14–L15: `import { soporteBiometria, autenticarBiometria } from '../utils/biometria';`.
+  - L16: Línea en blanco.
+  - L17–L22: `const emojiRol = (rol) => { ... }`: 'medico' -> '👨‍⚕️', 'admin' -> '🛡️', por defecto '👤'.
+  - L23: Línea en blanco.
+  - L24–L29: `const textoRol = (rol) => { ... }`: 'medico' -> 'Médico', 'admin' -> 'Administrador', por defecto 'Paciente'.
+  - L30: Línea en blanco.
+  - L31–L33: Comentario y `export default function Dashboard()` (aclara que no recibe props y que `BottomNav` resuelve la navegación).
+  - L34–L35: `const { usuario, bioPreferido, toggleBioPreferido } = useAuth();`.
+  - L36–L37: Estado `soporte`/`setSoporte` en `{ disponible: false, etiqueta: 'biometría' }`.
+  - L38: Línea en blanco.
+  - L39–L43: Comentario y `useEffect(() => { soporteBiometria().then(setSoporte); }, []);`.
+  - L44: Línea en blanco.
+  - L45–L51: `cambiarPreferencia` parte 1: comentario; si `!nuevo`, `await toggleBioPreferido(false)` y `return`.
+  - L52–L56: Parte 2: `const ok = await autenticarBiometria('Confirmá tu identidad para activar la huella')` y, si `ok`, `await toggleBioPreferido(true)`.
+  - L57: Línea en blanco.
+  - L58–L59: `return` y `<View style={styles.contenedor}>`.
+  - L60–L68: Comentario y tarjeta de saludo: `<Text style={styles.titulo}>👋 Hola, {usuario?.nombre || 'Usuario'}</Text>` y `<Text style={styles.texto}>{emojiRol(usuario?.tipo_usuario)} Rol: {textoRol(usuario?.tipo_usuario)}</Text>`.
+  - L69: Línea en blanco.
+  - L70–L73: Comentario de seguridad y `<View style={styles.tarjeta}>` con `<View style={styles.fila}>`.
+  - L74–L87: `<Text style={styles.filaLabel}>🔐 Proteger con {soporte.etiqueta}</Text>` y `<Switch value={bioPreferido} onValueChange={cambiarPreferencia} trackColor={{ false: '#767676', true: '#5a6fd0' }} thumbColor="#ffffff" />`, precedido del comentario de contraste (WCAG 1.4.11).
+  - L88–L92: Cierre `</View>` de la fila y `<Text style={styles.ayuda}>Al activarla, la próxima vez que abrís la app se pedirá tu {soporte.etiqueta} para entrar.</Text>`.
+  - L93–L96: Aviso `{!soporte.disponible ? <Text style={styles.error}>Este dispositivo no tiene {soporte.etiqueta} configurada.</Text> : null}`.
+  - L97: `</View>` cierra la tarjeta de seguridad.
+  - L98: Línea en blanco.
+  - L99–L104: Comentario y tarjeta de aviso: `<Text style={styles.texto}>📱 Usá la barra inferior para acceder a Pacientes, Médicos, Recetas y Salir.</Text>`.
+  - L105–L107: `</View>`, `);` y `}` cierran el componente.
+- **Se conecta con:** `src/context/AuthContext.jsx` (`usuario`, `bioPreferido`, `toggleBioPreferido`), `src/utils/biometria.js` (`soporteBiometria`, `autenticarBiometria`), `src/styles.js`, y `BottomNav` en `App.js` (que aporta la navegación real).
+
+## `src/screens/Pacientes.jsx` (140 líneas)
+- **Rol:** Listado y CRUD de pacientes. El listado lo renderiza `PagedList`; el alta/edición usa `FormularioPaciente` y el borrado `ConfirmarModal`. La gestión es solo para admin.
+- **Recorrido línea por línea:**
+  - L1–L8: Comentario de cabecera: describe listado paginado, formulario y confirmación, y la regla de negocio "gestión administrativa".
+  - L9: `import React, { useState } from 'react';`.
+  - L10: `import { View, Text, TouchableOpacity } from 'react-native';`.
+  - L11–L12: `import PagedList from './PagedList';`.
+  - L13–L14: `import FormularioPaciente from '../components/formularios/FormularioPaciente';`.
+  - L15–L16: `import ConfirmarModal from '../components/ConfirmarModal';`.
+  - L17–L18: `import { styles } from '../styles';`.
+  - L19–L20: `import { api } from '../api/client';`.
+  - L21–L22: `import { useAuth } from '../context/AuthContext';`.
+  - L23: Línea en blanco.
+  - L24–L28: `export default function Pacientes()`; `const { usuario } = useAuth();`; `const esAdmin = usuario?.tipo_usuario === 'admin';`.
+  - L29: Línea en blanco.
+  - L30–L44: Estados: `modo` (`'lista'`), `editando` (`null`), `borrar` (`null`), `cargandoBorrado` (`false`), `mensajeExito` (`''`), `mensajeError` (`''`) y `claveLista` (`0`).
+  - L45: Línea en blanco.
+  - L46–L52: `alGuardado`: `setMensajeExito('Paciente guardado correctamente')`, `setModo('lista')`, `setEditando(null)` y `setClaveLista((c) => c + 1)`.
+  - L53: Línea en blanco.
+  - L54–L57: `cancelarBorrado`: `if (!cargandoBorrado) setBorrar(null);`.
+  - L58: Línea en blanco.
+  - L59–L76: `confirmarBorrado`: `setCargandoBorrado(true)`; `await api(\`/pacientes/${borrar.id}\`, { method: 'DELETE' })`; en éxito `setMensajeExito('Paciente eliminado correctamente')`, `setBorrar(null)`, `setClaveLista((c) => c + 1)`; en `catch` `setMensajeError(err.message || 'No se pudo eliminar el paciente')` y `setBorrar(null)`; `finally` `setCargandoBorrado(false)`.
+  - L77: Línea en blanco.
+  - L78–L87: `if (modo !== 'lista')` retorna `<FormularioPaciente inicial={modo === 'editar' ? editando : null} onGuardado={alGuardado} onCancelar={() => { setModo('lista'); setEditando(null); }} />`.
+  - L88: Línea en blanco.
+  - L89–L94: `return` con `<View style={{ flex: 1 }}>` y los banners `{mensajeExito ? <Text style={styles.exito}>{mensajeExito}</Text> : null}` y `{mensajeError ? <Text style={styles.error}>{mensajeError}</Text> : null}`.
+  - L95: Línea en blanco.
+  - L96–L127: `<PagedList>` con `key={claveLista}`, `url="/pacientes"`, `titulo="👤 Pacientes"`, `placeholder="Buscar por nombre, DNI u obra social..."`, `campos` (nombre/DNI/obra_social), `onNuevo={esAdmin ? () => setModo('nuevo') : null}` y `renderAcciones={esAdmin ? (item) => (...) }` con los `TouchableOpacity` de "✏️ Editar" (abre modo editar) y "🗑️ Eliminar" (`setBorrar(item)`).
+  - L128: Línea en blanco.
+  - L129–L137: `<ConfirmarModal visible={borrar !== null} titulo="Eliminar paciente" mensaje={\`¿Eliminar a "${borrar?.nombre}"? Esta acción no se puede deshacer.\`} alConfirmar={confirmarBorrado} alCancelar={cancelarBorrado} cargando={cargandoBorrado} />`.
+  - L138–L140: `</View>`, `);` y `}` cierran el componente.
+- **Se conecta con:** `src/screens/PagedList.jsx`, `src/components/formularios/FormularioPaciente.jsx`, `src/components/ConfirmarModal.jsx`, `src/api/client.js` (`api`), `src/context/AuthContext.jsx` (`usuario`), `src/styles.js`.
+
+## `src/screens/Medicos.jsx` (140 líneas)
+- **Rol:** Listado y CRUD de médicos. Estructura paralela a Pacientes: listado vía `PagedList`, alta/edición vía `FormularioMedico`, borrado vía `ConfirmarModal`. Gestión exclusiva del admin.
+- **Recorrido línea por línea:**
+  - L1–L9: Comentario de cabecera: describe listado/formulario/confirmación y que POST/PUT/DELETE de `/api/medicos` exigen rol 'admin'.
+  - L10: `import React, { useState } from 'react';`.
+  - L11: `import { View, Text, TouchableOpacity } from 'react-native';`.
+  - L12–L13: `import PagedList from './PagedList';`.
+  - L14–L15: `import FormularioMedico from '../components/formularios/FormularioMedico';`.
+  - L16–L17: `import ConfirmarModal from '../components/ConfirmarModal';`.
+  - L18–L19: `import { styles } from '../styles';`.
+  - L20–L21: `import { api } from '../api/client';`.
+  - L22–L23: `import { useAuth } from '../context/AuthContext';`.
+  - L24: Línea en blanco.
+  - L25–L29: `export default function Medicos()`; `const { usuario } = useAuth();`; `const esAdmin = usuario?.tipo_usuario === 'admin';`.
+  - L30: Línea en blanco.
+  - L31–L44: Estados: `modo`, `editando`, `borrar`, `cargandoBorrado`, `mensajeExito`, `mensajeError` y `claveLista`.
+  - L45: Línea en blanco.
+  - L46–L52: `alGuardado`: `setMensajeExito('Médico guardado correctamente')`, `setModo('lista')`, `setEditando(null)` y `setClaveLista((c) => c + 1)`.
+  - L53: Línea en blanco.
+  - L54–L57: `cancelarBorrado`: `if (!cargandoBorrado) setBorrar(null);`.
+  - L58: Línea en blanco.
+  - L59–L76: `confirmarBorrado`: `setCargandoBorrado(true)`; `await api(\`/medicos/${borrar.id}\`, { method: 'DELETE' })`; en éxito `setMensajeExito('Médico eliminado correctamente')`, `setBorrar(null)`, `setClaveLista((c) => c + 1)`; en `catch` `setMensajeError(err.message || 'No se pudo eliminar el médico')` y `setBorrar(null)`; `finally` `setCargandoBorrado(false)`.
+  - L77: Línea en blanco.
+  - L78–L87: `if (modo !== 'lista')` retorna `<FormularioMedico inicial={modo === 'editar' ? editando : null} onGuardado={alGuardado} onCancelar={() => { setModo('lista'); setEditando(null); }} />`.
+  - L88: Línea en blanco.
+  - L89–L94: `return` con `<View style={{ flex: 1 }}>` y los banners de `mensajeExito` y `mensajeError`.
+  - L95: Línea en blanco.
+  - L96–L127: `<PagedList>` con `key={claveLista}`, `url="/medicos"`, `titulo="👨‍⚕️ Médicos"`, `placeholder="Buscar por nombre, matrícula o especialidad..."`, `campos` (nombre/matricula/especialidad), `onNuevo={esAdmin ? () => setModo('nuevo') : null}` y `renderAcciones={esAdmin ? (item) => (...) }` con "✏️ Editar" y "🗑️ Eliminar".
+  - L128: Línea en blanco.
+  - L129–L137: `<ConfirmarModal visible={borrar !== null} titulo="Eliminar médico" mensaje={\`¿Eliminar a "${borrar?.nombre}"? Esta acción no se puede deshacer.\`} alConfirmar={confirmarBorrado} alCancelar={cancelarBorrado} cargando={cargandoBorrado} />`.
+  - L138–L140: `</View>`, `);` y `}` cierran el componente.
+- **Se conecta con:** `src/screens/PagedList.jsx`, `src/components/formularios/FormularioMedico.jsx`, `src/components/ConfirmarModal.jsx`, `src/api/client.js` (`api`), `src/context/AuthContext.jsx` (`usuario`), `src/styles.js`.
+
+## `src/screens/Prescripciones.jsx` (305 líneas)
+- **Rol:** Listado y CRUD de prescripciones con filtro por estado. Alta/edición solo médicos, cambio de estado cualquier usuario autenticado, borrado solo admins. Usa `PagedList`, `FormularioPrescripcion`, `ConfirmarModal` y un `Modal` nativo de cambio de estado (`ModalEstado`).
+- **Recorrido línea por línea:**
+  - L1–L9: Comentario de cabecera: reglas de CRUD por rol (alta/edición solo médico, estado cualquiera, borrado solo admin) y componentes usados.
+  - L10: `import React, { useState } from 'react';`.
+  - L11: `import { View, Text, TouchableOpacity, Modal } from 'react-native';`.
+  - L12–L13: `import PagedList from './PagedList';`.
+  - L14–L15: `import FormularioPrescripcion from '../components/formularios/FormularioPrescripcion';`.
+  - L16–L17: `import ConfirmarModal from '../components/ConfirmarModal';`.
+  - L18–L19: `import { styles } from '../styles';`.
+  - L20–L21: `import { api } from '../api/client';`.
+  - L22–L23: `import { useAuth } from '../context/AuthContext';`.
+  - L24: Línea en blanco.
+  - L25–L32: `const etiquetaEstado = (estado) => { ... }`: 'activa' -> '✓ Activa', 'vencida' -> '⚠ Vencida', 'dispensada' -> '✓ Dispensada', 'cancelada' -> '✗ Cancelada', otro -> se muestra tal cual.
+  - L33: Línea en blanco.
+  - L34–L46: Comentario de `colorEstado`: explica que los colores Tailwind previos no pasaban 4.5:1 sobre blanco y que ahora se usan los mismos tokens del Web.
+  - L47–L53: `const colorEstado = (estado) => { ... }`: 'activa' -> '#12883e', 'vencida' -> '#ad6500', 'dispensada' -> '#197ac7', 'cancelada' -> '#b3261e', otro -> '#495057'.
+  - L54: Línea en blanco.
+  - L55–L57: Comentario de `ModalEstado`: lista las 4 opciones permitidas y marca la vigente; describe las props `prescripcion`, `cargando`, `alElegir`, `alCerrar`.
+  - L58–L60: `function ModalEstado({ prescripcion, cargando, alElegir, alCerrar })` y `const OPCIONES = ['activa', 'vencida', 'dispensada', 'cancelada'];`.
+  - L61: Línea en blanco.
+  - L62–L69: `return` con comentario y `<Modal visible={prescripcion !== null} transparent animationType="fade" onRequestClose={alCerrar}>`.
+  - L70–L73: Comentario del fondo oscuro y `<View style={{ flex: 1, justifyContent: 'center', padding: 24, backgroundColor: 'rgba(0,0,0,0.5)' }}>` con `<View style={[styles.tarjeta, { marginBottom: 0 }]}>`.
+  - L74–L76: `<Text style={[styles.titulo, { fontSize: 18 }]}>Cambiar estado</Text>` y `<Text style={styles.texto}>Receta de {prescripcion?.nombre_paciente || '...'}:</Text>`.
+  - L77: Línea en blanco.
+  - L78–L103: `{OPCIONES.map((estado) => (...))}`: un `<TouchableOpacity key={estado}>` por estado con `style` (fila, `minHeight: 44`, borde inferior y `backgroundColor` resaltado si es el vigente), `onPress={() => alElegir(estado)}`, `disabled={cargando}`; dentro `<Text style={{ fontSize: 16, color: colorEstado(estado), fontWeight: '600' }}>{etiquetaEstado(estado)}</Text>` y el check `{prescripcion?.estado === estado ? <Text>✅</Text> : null}`.
+  - L104: Línea en blanco.
+  - L105–L112: Comentario y `<TouchableOpacity style={[styles.botonSecundario, { marginTop: 12 }]} onPress={alCerrar} disabled={cargando}>` con `<Text style={{ fontWeight: '600' }}>Cancelar</Text>`.
+  - L113–L117: `</View>`, `</View>`, `</Modal>` y `}` cierran `ModalEstado`.
+  - L118: Línea en blanco.
+  - L119–L125: `export default function Prescripciones()`; `const { usuario } = useAuth();`; `const esMedico = usuario?.tipo_usuario === 'medico';`; `const esAdmin = usuario?.tipo_usuario === 'admin';`.
+  - L126: Línea en blanco.
+  - L127–L144: Estados: `modo`, `editando`, `borrar`, `cambiarEstado`, `cargandoBorrado`, `cargandoEstado`, `mensajeExito`, `mensajeError` y `claveLista`.
+  - L145: Línea en blanco.
+  - L146–L152: `alGuardado`: `setMensajeExito('Prescripción guardada correctamente')`, `setModo('lista')`, `setEditando(null)` y `setClaveLista((c) => c + 1)`.
+  - L153: Línea en blanco.
+  - L154–L157: `cancelarBorrado`: `if (!cargandoBorrado) setBorrar(null);`.
+  - L158: Línea en blanco.
+  - L159–L176: `confirmarBorrado`: `setCargandoBorrado(true)`; `await api(\`/prescripciones/${borrar.id}\`, { method: 'DELETE' })`; en éxito `setMensajeExito('Prescripción eliminada correctamente')`, `setBorrar(null)`, `setClaveLista((c) => c + 1)`; en `catch` `setMensajeError(err.message || 'No se pudo eliminar la prescripción')` y `setBorrar(null)`; `finally` `setCargandoBorrado(false)`.
+  - L177: Línea en blanco.
+  - L178–L199: `confirmarEstado(nuevoEstado)`: `setCargandoEstado(true)`; `await api(\`/prescripciones/${cambiarEstado.id}/estado\`, { method: 'PATCH', body: { estado: nuevoEstado } })`; en éxito `setMensajeExito('Estado actualizado correctamente')`, `setCambiarEstado(null)`, `setClaveLista((c) => c + 1)`; en `catch` `setMensajeError(err.message || 'No se pudo actualizar el estado')` y `setCambiarEstado(null)`; `finally` `setCargandoEstado(false)`.
+  - L200: Línea en blanco.
+  - L201–L210: `if (modo !== 'lista')` retorna `<FormularioPrescripcion inicial={modo === 'editar' ? editando : null} onGuardado={alGuardado} onCancelar={() => { setModo('lista'); setEditando(null); }} />`.
+  - L211: Línea en blanco.
+  - L212–L217: `return` con `<View style={{ flex: 1 }}>` y los banners de `mensajeExito` y `mensajeError`.
+  - L218: Línea en blanco.
+  - L219–L284: `<PagedList>` con `key={claveLista}`, `url="/prescripciones"`, `titulo="💊 Prescripciones"`, `placeholder="Buscar por medicamento, paciente o médico..."`, `campos` (medicamentos/nombre_paciente/nombre_medico/estado), `filtros` (4 chips de estado), `renderValor` (une medicamentos como "Nombre (Dosis)", usa `etiquetaEstado` para estado y `?? '—'` para el resto), `onNuevo={esMedico ? () => setModo('nuevo') : null}` y `renderAcciones` con "✏️ Editar" (solo `esMedico`), "🔁 Estado" (siempre, `setCambiarEstado(item)`) y "🗑️ Eliminar" (solo `esAdmin`).
+  - L285: Línea en blanco.
+  - L286–L294: `<ConfirmarModal visible={borrar !== null} titulo="Eliminar prescripción" mensaje={\`¿Eliminar la receta de "${borrar?.nombre_paciente}"? Esta acción no se puede deshacer.\`} alConfirmar={confirmarBorrado} alCancelar={cancelarBorrado} cargando={cargandoBorrado} />`.
+  - L295: Línea en blanco.
+  - L296–L302: `<ModalEstado prescripcion={cambiarEstado} cargando={cargandoEstado} alElegir={confirmarEstado} alCerrar={() => { if (!cargandoEstado) setCambiarEstado(null); }} />`.
+  - L303–L305: `</View>`, `);` y `}` cierran el componente.
+- **Se conecta con:** `src/screens/PagedList.jsx`, `src/components/formularios/FormularioPrescripcion.jsx`, `src/components/ConfirmarModal.jsx`, `src/api/client.js` (`api`), `src/context/AuthContext.jsx` (`usuario`), `src/styles.js`.
+
+## `src/screens/PagedList.jsx` (226 líneas)
+- **Rol:** Componente genérico reutilizable de listado paginado con búsqueda (debounce) y filtros opcionales. Consume `GET /api/{url}?pagina=N&por_pagina=M&q=busqueda` y se configura por props desde Pacientes, Médicos y Prescripciones.
+- **Recorrido línea por línea:**
+  - L1–L7: Comentario de cabecera: describe el endpoint paginado, búsqueda con debounce y controles Anterior/Siguiente.
+  - L8: `import React, { useState, useEffect } from 'react';`.
+  - L9–L11: `import { View, Text, TextInput, FlatList, TouchableOpacity, ActivityIndicator, ScrollView, Platform } from 'react-native';`.
+  - L12–L13: `import { styles } from '../styles';`.
+  - L14–L15: `import { api } from '../api/client';`.
+  - L16–L17: `import { POR_PAGINA } from '../config';`.
+  - L18: Línea en blanco.
+  - L19–L28: Comentario que documenta las props: `url`, `titulo`, `placeholder`, `campos`, `renderValor`, `filtros`, `onNuevo` y `renderAcciones`.
+  - L29–L32: Firma `export default function PagedList({ url, titulo, placeholder, campos, renderValor, filtros = [], onNuevo = null, renderAcciones = null })`.
+  - L33–L34: Estado `pagina`/`setPagina` en `1`.
+  - L35–L36: Estado `datos`/`setDatos` en `[]`.
+  - L37–L38: Estado `total`/`setTotal` en `0`.
+  - L39–L40: Estado `totalPaginas`/`setTotalPaginas` en `1`.
+  - L41–L42: Estado `busqueda`/`setBusqueda` en `''`.
+  - L43–L44: Estado `busquedaAplicada`/`setBusquedaAplicada` en `''`.
+  - L45–L46: Estado `filtro`/`setFiltro` en `''`.
+  - L47–L48: Estado `cargando`/`setCargando` en `true`.
+  - L49–L50: Estado `error`/`setError` en `''`.
+  - L51: Línea en blanco.
+  - L52–L59: `useEffect` de debounce: `const timer = setTimeout(() => { setPagina(1); setBusquedaAplicada(busqueda); }, 400);` y `return () => clearTimeout(timer);`, dependiente de `[busqueda]`.
+  - L60: Línea en blanco.
+  - L61–L65: `useEffect(() => { cargarPagina(); ... }, [pagina, busquedaAplicada, filtro]);` con `eslint-disable-next-line react-hooks/exhaustive-deps`.
+  - L66: Línea en blanco.
+  - L67–L86: `const cargarPagina = async () => { ... }`: `setCargando(true)`, `setError('')`; `const data = await api(url, { params: { pagina, por_pagina: POR_PAGINA, q: busquedaAplicada, estado: filtro } })`; `setDatos(data.items || [])`, `setTotal(data.total || 0)`, `setTotalPaginas(data.total_paginas || 1)`; en `catch` `setError(err.message || 'Error al cargar los datos')`; `finally` `setCargando(false)`.
+  - L87: Línea en blanco.
+  - L88–L93: `const cambiarPagina = (nueva) => { ... }`: `if (nueva < 1 || nueva > totalPaginas) return;` y `setPagina(nueva)`.
+  - L94: Línea en blanco.
+  - L95–L100: `const mostrarValor = (registro, campo) => { ... }`: si hay `renderValor` la usa; si no, devuelve `registro[campo.clave] ?? '—'`.
+  - L101: Línea en blanco.
+  - L102–L105: `return` con `<View style={styles.contenedor}>` y `<Text style={styles.titulo}>{titulo}</Text>`.
+  - L106: Línea en blanco.
+  - L107–L113: `<TextInput style={styles.input} placeholder={placeholder} value={busqueda} onChangeText={setBusqueda} />`.
+  - L114: Línea en blanco.
+  - L115–L121: `{onNuevo ? (<TouchableOpacity style={styles.botonNuevo} onPress={onNuevo}><Text style={styles.botonNuevoTexto}>＋ Nuevo</Text></TouchableOpacity>) : null}`.
+  - L122: Línea en blanco.
+  - L123–L150: `{filtros.length > 0 && (...)}`: `<ScrollView horizontal showsHorizontalScrollIndicator={false}>` con `filtros.map` que dibuja chips; cada `<TouchableOpacity key={f.valor}>` con `onPress={() => setFiltro(f.valor === filtro ? '' : f.valor)}` y `style` con `backgroundColor: filtro === f.valor ? '#5a6fd0' : '#e0e0e0'` y radios/márgenes; dentro `<Text style={{ color: filtro === f.valor ? '#fff' : '#333', fontWeight: '600' }}>{f.etiqueta}</Text>`.
+  - L151: Línea en blanco.
+  - L152–L153: Error global `{error ? <Text style={styles.error}>{error}</Text> : null}`.
+  - L154: Línea en blanco.
+  - L155–L159: Comentario del indicador y `{cargando ? (<ActivityIndicator size="large" color="#5a6fd0" style={{ marginTop: 30 }} />) : (`.
+  - L160–L168: `<FlatList data={datos} keyExtractor={(item) => String(item.id)} initialNumToRender={POR_PAGINA} windowSize={7} removeClippedSubviews={Platform.OS === 'android'} keyboardShouldPersistTaps="handled" keyboardDismissMode="on-drag" ...>`.
+  - L169–L174: `ListEmptyComponent={() => (<View style={styles.tarjeta}><Text style={styles.texto}>No hay resultados</Text></View>)}`.
+  - L175–L192: `renderItem={({ item }) => (...)}`: `<View style={styles.tarjeta}>` con `campos.map` que dibuja por campo una `<View style={styles.fila}>` con `<Text style={styles.filaLabel}>{campo.etiqueta}:</Text>` y `<Text style={styles.filaValor}>{mostrarValor(item, campo)}</Text>`; y al pie `{renderAcciones ? (<View style={styles.pieAcciones}>{renderAcciones(item)}</View>) : null}`.
+  - L193: `/>` cierra el `FlatList`.
+  - L194: `)}` cierra el condicional `cargando`.
+  - L195: Línea en blanco.
+  - L196–L220: `{!cargando && totalPaginas > 1 && (<View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 8 }}>`: botón "← Anterior" (`onPress={() => cambiarPagina(pagina - 1)}`, `disabled={pagina <= 1}`, `opacity` reducida), `<Text style={styles.texto}>Página {pagina} de {totalPaginas}</Text>` y botón "Siguiente →" (`onPress={() => cambiarPagina(pagina + 1)}`, `disabled={pagina >= totalPaginas}`, `opacity` reducida).
+  - L221: Línea en blanco.
+  - L222–L223: Pie `{!cargando && <Text style={[styles.texto, { textAlign: 'center', marginTop: 8 }]}>Total: {total}</Text>}`.
+  - L224–L226: `</View>`, `);` y `}` cierran el componente.
+- **Se conecta con:** `src/styles.js`, `src/api/client.js` (`api`), `src/config.js` (`POR_PAGINA`); es consumido por `src/screens/Pacientes.jsx`, `src/screens/Medicos.jsx` y `src/screens/Prescripciones.jsx`.
