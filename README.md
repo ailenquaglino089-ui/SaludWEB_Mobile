@@ -166,6 +166,8 @@ Para volver a dejar los datos de demostración como estaban, en el backend:
 - La revisión y prueba del proyecto (guía "de checklist a evidencia") está en
   [`REVISAR_Y_PROBAR_EL_PROYECTO.md`](REVISAR_Y_PROBAR_EL_PROYECTO.md), con los entregables de
   evidencia en `QA/`.
+- La cronología del trabajo reciente en los tres repositorios está en el
+  [registro de cambios](https://github.com/ailenquaglino089-ui/SaludWEB_Web/blob/main/REGISTRO_DE_CAMBIOS.md).
 
 ## Calidad del software
 
