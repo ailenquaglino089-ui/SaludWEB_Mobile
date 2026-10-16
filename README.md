@@ -153,8 +153,9 @@ Para volver a dejar los datos de demostración como estaban, en el backend:
   [AGENDA de trabajo del Backend](../SaludWEB_Backend/AGENDA_DE_TRABAJO.md) y en el
   [PROJECT_BRIEF](../SaludWEB_Backend/PROJECT_BRIEF.md).
 - El backend trae sus propias suites de pruebas (`probar_roles.php`,
-  `probar_vinculacion.php`, `probar_turnera.php`, `probar_tiempo_real.php`); la app móvil usa
-  la **misma API**, así que las reglas verificadas ahí valen para esta app.
+  `probar_vinculacion.php`, `probar_turnera.php`, `probar_tiempo_real.php`,
+  `probar_seguridad.php`); la app móvil usa la **misma API**, así que las reglas verificadas
+  ahí valen para esta app.
 - La verificación en emulador/dispositivo real queda agendada en la fase **E3**
   (05–06/10): instalación con Expo Go, login, biometría y SSO contra el backend local.
 - La revisión y prueba del proyecto (guía "de checklist a evidencia") está en
