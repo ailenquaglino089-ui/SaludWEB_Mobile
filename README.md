@@ -90,8 +90,10 @@ npm start            # levanta Expo Go / emulador
 ```
 
 > El backend tiene que estar corriendo (en `SaludWEB_Backend`: `composer run dev`,
-> en `http://127.0.0.1:8000`). En navegador alcanza con ese valor; en emulador
-> Android o celular físico ajustá la URL según la sección siguiente.
+> en `http://127.0.0.1:8000`; **sin XAMPP ni MySQL**, con el PHP nativo y SQLite).
+> Hay un arranque de un solo clic en `SaludWEB_Web\scripts\iniciar_saludweb.bat`.
+> En navegador alcanza con ese valor; en emulador Android o celular físico ajustá
+> la URL según la sección siguiente.
 
 ### Variables de entorno (opcional)
 
@@ -136,6 +138,9 @@ backend nativo (`http://127.0.0.1:8000/api`).
 > Estas cuentas existen si migraste la base MySQL vieja. **En un clon nuevo no hay
 > ninguna**: creala primero desde la SPA (pantalla de Registro) o por `POST
 > /api/auth/registro` (ver el README del backend, sección "Primer acceso").
+>
+> **¿No recordás la clave de `admin@salud.com`?** En el backend:
+> `php resetear_password.php admin@salud.com MiClaveNueva123` (solo consola/desarrollo).
 
 > La cuenta administradora quedó como la única con ese rol. Antes había tres
 > cuentas de prueba con permisos de administrador, lo que hacía que la pantalla
