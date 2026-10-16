@@ -42,7 +42,7 @@ aplicada y comentada **línea por línea** en `GUIA_MOBILE.md`.
   autocompletado del SO, más separador "o continuá con" para los accesos rápidos.
 
 > **Nota sobre tiempo real:** el canal SSE del backend se aplica por ahora a la **SPA web**
-> (ver [`GUIA_TIEMPO_REAL.md`](../SaludWEB_Backend/GUIA_TIEMPO_REAL.md)). En mobile el
+> (ver [`GUIA_TIEMPO_REAL.md`](https://github.com/ailenquaglino089-ui/SaludWEB_Backend/blob/main/GUIA_TIEMPO_REAL.md)). En mobile el
 > equivalente es otra tecnología —EventSource no existe en React Native—; lo que sí se
 > mantiene es el mismo contrato: el backend sigue siendo la única fuente de verdad y esta
 > app consume los mismos endpoints REST.
@@ -155,8 +155,8 @@ Para volver a dejar los datos de demostración como estaban, en el backend:
 ## Pasos y verificación
 
 - Todo el avance, los pasos y las decisiones (F1 a F4) están registrados en la
-  [AGENDA de trabajo del Backend](../SaludWEB_Backend/AGENDA_DE_TRABAJO.md) y en el
-  [PROJECT_BRIEF](../SaludWEB_Backend/PROJECT_BRIEF.md).
+  [AGENDA de trabajo del Backend](https://github.com/ailenquaglino089-ui/SaludWEB_Backend/blob/main/AGENDA_DE_TRABAJO.md) y en el
+  [PROJECT_BRIEF](https://github.com/ailenquaglino089-ui/SaludWEB_Backend/blob/main/PROJECT_BRIEF.md).
 - El backend trae sus propias suites de pruebas (`probar_roles.php`,
   `probar_vinculacion.php`, `probar_turnera.php`, `probar_tiempo_real.php`,
   `probar_seguridad.php`); la app móvil usa la **misma API**, así que las reglas verificadas
