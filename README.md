@@ -214,3 +214,14 @@ el mismo dispositivo no deben quedar mezcladas en el mismo contexto.
   pacientes y el log no es el lugar para eso.
 - Cada nivel se escribe con el metodo de consola que le corresponde, para que el filtrado de
   Metro y de las herramientas de desarrollo funcione.
+
+## Guía para preparar el sistema para producción y defensa
+
+Guía práctica, comentada línea por línea, para llevar un proyecto al entorno de producción
+con garantías de calidad y defenderlo con solidez: ambientes (desarrollo, prueba y
+producción), variables de configuración, deploy, CI/CD, backups, README profesional,
+documentación funcional y técnica, y los diagramas necesarios (ER, casos de uso,
+arquitectura y flujo), con una lista de verificación final para la defensa. Está en la raíz
+de los tres repositorios del proyecto (Backend, Web y Mobile):
+
+- [PREPARAR_SISTEMA_PARA_PRODUCCION_Y_DEFENSA.md](https://github.com/ailenquaglino089-ui/SaludWEB_Mobile/blob/main/PREPARAR_SISTEMA_PARA_PRODUCCION_Y_DEFENSA.md)
