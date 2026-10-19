@@ -287,6 +287,16 @@ instalador. Es un paso aparte, todavía no incluido en el proyecto.
 - Un celular nuevo: la app es liviana (lista virtualizada, peticiones con tiempo máximo de espera).
 - Instalar nada en la PC del usuario final que solo quiera usar la web.
 
+## Base de datos de desarrollo
+
+La app **no guarda los datos en el celular**: los pide al backend y los muestra.
+La base de desarrollo del proyecto es un archivo **SQLite** del backend, en
+`SaludWEB_Backend/storage/saludweb.sqlite`, que se crea solo en el primer
+arranque de la API y **no se sube a GitHub** (cada clone genera el suyo, vacío de
+cuentas). Detalle completo —qué contiene, cómo regenerar los datos de demo y
+cómo moverla— en la sección **"Base de datos de desarrollo"** del
+[README del Backend](https://github.com/ailenquaglino089-ui/SaludWEB_Backend/blob/main/README.md).
+
 ## Guía para preparar el sistema para producción y defensa
 
 Guía práctica, comentada línea por línea, para llevar un proyecto al entorno de producción
