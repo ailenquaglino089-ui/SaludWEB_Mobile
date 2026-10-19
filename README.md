@@ -301,6 +301,24 @@ el mismo dispositivo no deben quedar mezcladas en el mismo contexto.
 - Cada nivel se escribe con el metodo de consola que le corresponde, para que el filtrado de
   Metro y de las herramientas de desarrollo funcione.
 
+## Comandos y verificaciones disponibles
+
+Mapa completo de lo que se puede ejecutar en este repositorio, qué hace cada
+comando y con qué cuidado.
+
+| Comando | Qué hace | Riesgo / requisito |
+|---|---|---|
+| `npm start` | Levanta Metro/Expo y muestra el QR | Bloquea la terminal; el celular necesita el backend accesible en la red. |
+| `npm run android` | Abre el emulador Android | Bloquea; requiere Android Studio y un emulador. |
+| `npm run ios` | Abre el simulador de iOS | Bloquea; requiere macOS con Xcode. |
+| `npm run web` | Intenta abrir la app en el navegador | **No funciona tal cual**: faltan `react-native-web` y `react-dom` en las dependencias del proyecto. |
+| `npm run export` | Compila los bundles de iOS y Android a `dist/` | Escribe `dist/` (ignorado por git); tarda alrededor de un minuto. |
+| `npm test` | 27 pruebas unitarias (logger y correlación) | Ninguno: no necesita emulador, celular ni backend. |
+
+Última corrida (19/10/2026): **27/27 pruebas unitarias** y export **OK** (633
+módulos iOS y 636 Android). Los comandos que abren un servidor interactivo se
+usan a mano: no forman parte de una corrida automática.
+
 ## Cómo presentar el proyecto a alguien que no entiende de tecnología
 
 Discurso armado sin jerga, para una demo, una defensa o una charla con alguien del
