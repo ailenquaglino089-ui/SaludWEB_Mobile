@@ -215,6 +215,78 @@ el mismo dispositivo no deben quedar mezcladas en el mismo contexto.
 - Cada nivel se escribe con el metodo de consola que le corresponde, para que el filtrado de
   Metro y de las herramientas de desarrollo funcione.
 
+## Cómo presentar el proyecto a alguien que no entiende de tecnología
+
+Discurso armado sin jerga, para una demo, una defensa o una charla con alguien del
+rubro salud que no programa. La regla: hablar de problemas y beneficios, nunca de
+tecnologías. Esta app es la cara de SaludWEB que va en el bolsillo.
+
+**En una frase:** SaludWEB es un sistema para gestionar turnos médicos en línea, y
+esta app lleva esa misma gestión al celular del paciente y del médico: reservar,
+consultar y administrar turnos desde cualquier lugar.
+
+**El problema que resuelve:**
+
+- Turnos tomados por teléfono, en horarios limitados.
+- Agenda en papel o en Excel, con riesgo de turnos dobles y olvidos.
+- El paciente espera sin saber si le quedó el turno.
+
+**Qué gana cada persona:**
+
+| Quién | Qué gana |
+|---|---|
+| Paciente | Reserva su turno las 24 horas desde el celular, sin llamar, y puede ver o cancelar los suyos. |
+| Médico | Ve su agenda del día actualizada sola, desde el teléfono. |
+| Administrador | Controla usuarios, profesionales y turnos desde una pantalla, donde esté. |
+
+**Respuestas a las preguntas típicas, en criollo:**
+
+| Pregunta | Respuesta |
+|---|---|
+| ¿Hay que instalar algo? | En desarrollo no: se usa Expo Go (una app gratuita) y se entra escaneando un código. Para distribuirla como app instalable hay que generar su build (por ejemplo, con EAS Build). |
+| ¿Es una web o una app? | Las dos: SaludWEB tiene web para navegador y esta app para celular, y las dos hablan con el mismo sistema. |
+| ¿Dónde están los datos? | En el servidor del sistema; la app solo los pide y los muestra. |
+| ¿Es seguro? | La sesión se guarda localmente en el teléfono, cada usuario entra con su clave y, además, se puede proteger con la huella o el rostro del dueño del dispositivo. |
+| ¿Cuánto cuesta? | El software no tiene licencias: está hecho con tecnología libre (React Native, Expo) y corre en un celular común. |
+
+**Demo de 3 minutos (guion para mostrarlo en vivo):**
+
+1. Abrir la app y mostrar la pantalla de login.
+2. Entrar como paciente y mostrar que ve solo lo suyo.
+3. Reservar un turno desde el celular y, en la web del consultorio, verlo aparecer.
+4. Mostrar el bloqueo con huella o rostro, si el teléfono lo tiene.
+
+**Analogía que funciona:** es como la app del banco: el celular es solo la ventana
+desde la que se opera, y la caja fuerte (los datos y las reglas) está en el
+servidor del sistema.
+
+## ¿Se puede usar en otras computadoras (u otros celulares)?
+
+**Sí.** La app no está atada a un dispositivo.
+
+### En desarrollo
+
+- **Celular físico:** Expo Go (app gratuita) escaneando el QR que imprime `npm start`.
+- **Emulador Android:** la API se ve desde `http://10.0.2.2:8000/api`.
+- **Navegador:** `http://127.0.0.1:8000/api`.
+
+En los tres casos hace falta el backend corriendo (ver el README del Backend). Si
+el celular es físico y va por WiFi, el backend tiene que escuchar en la red
+(`php -S 0.0.0.0:8000`) y la URL es `http://<IP-de-tu-PC>:8000/api` (ver la
+sección "Variables de entorno").
+
+### Para distribuirla como app instalable
+
+Hoy corre con Expo Go. Para que cualquier persona la instale hay que generar un
+build (por ejemplo, con **EAS Build** de Expo) y publicarla o compartir el
+instalador. Es un paso aparte, todavía no incluido en el proyecto.
+
+### Lo que NO hace falta
+
+- iOS ni Android "con licencia": el emulador y Expo Go son gratuitos.
+- Un celular nuevo: la app es liviana (lista virtualizada, peticiones con tiempo máximo de espera).
+- Instalar nada en la PC del usuario final que solo quiera usar la web.
+
 ## Guía para preparar el sistema para producción y defensa
 
 Guía práctica, comentada línea por línea, para llevar un proyecto al entorno de producción
