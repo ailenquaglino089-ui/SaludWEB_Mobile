@@ -95,6 +95,92 @@ npm start            # levanta Expo Go / emulador
 > En navegador alcanza con ese valor; en emulador Android o celular físico ajustá
 > la URL según la sección siguiente.
 
+### Cómo usarlo en teléfonos (paso a paso)
+
+La app está hecha con **Expo SDK 53** (React Native) y hay tres caminos para
+llevarla a un teléfono, del más rápido al más formal. Los tres comparten un
+requisito: **el backend de SaludWEB tiene que estar corriendo**.
+
+#### Opción 1 — Tu celular físico con Expo Go (la más rápida)
+
+1. **En la PC, levantar el backend escuchando en la red** (no solo en la propia
+   máquina):
+
+   ```bash
+   cd SaludWEB_Backend
+   php -S 0.0.0.0:8000 index.php
+   ```
+
+   La ruta de `php` es la del PHP propio (`C:\Users\<usuario>\php83\php.exe`);
+   el de XAMPP también sirve si ya lo tenés instalado.
+
+2. **Descubrir la IP de la PC**: en Windows, `ipconfig` en la terminal y mirar
+   "Dirección IPv4" (algo como `192.168.1.20`).
+
+3. **Configurar la app** (solo la primera vez, o cada vez que cambie la IP):
+
+   ```bash
+   cd SaludWEB_Mobile
+   copy .env.example .env
+   ```
+
+   y dentro del `.env`, con la IP de tu PC:
+
+   ```
+   EXPO_PUBLIC_API_URL=http://192.168.1.20:8000/api
+   ```
+
+4. **Arrancar Expo** (la primera vez también `npm install`):
+
+   ```bash
+   npm start --clear
+   ```
+
+   El `--clear` hace falta si recién cambiaste el `.env`: Expo inyecta las
+   variables en el momento de empaquetar, no las lee en caliente.
+
+5. **En el celular**: instalar **Expo Go** (Play Store o App Store), conectarlo
+   a **la misma red WiFi que la PC** y escanear el **código QR** que aparece en
+   la terminal con la cámara (o con la propia Expo Go).
+
+6. **Entrar**: registrar una cuenta desde la pantalla de Registro, o usar las
+   credenciales de prueba (ver "Credenciales de prueba" más abajo).
+
+> Si la app carga pero no conecta con el servidor, casi siempre es una de tres
+> cosas: la IP está mal escrita, el backend no está escuchando en `0.0.0.0`, o
+> el celular está en otra red (datos móviles en vez de WiFi).
+
+#### Opción 2 — Emulador Android (en la PC, sin celular)
+
+1. Tener **Android Studio** instalado y un emulador corriendo.
+2. En el `.env`: `EXPO_PUBLIC_API_URL=http://10.0.2.2:8000/api`
+   (`10.0.2.2` es como el emulador ve al `localhost` de la PC).
+3. `npm start` y presionar **a** en la terminal (o `npm run android`).
+
+#### Opción 3 — Simulador de iOS (en una Mac)
+
+1. Con Xcode y un simulador corriendo.
+2. En el `.env`: `EXPO_PUBLIC_API_URL=http://127.0.0.1:8000/api`.
+3. `npm start` y presionar **i** en la terminal (o `npm run ios`).
+
+#### Opción 4 — App instalable (para que la use cualquiera)
+
+Expo Go sirve para desarrollo y demostración. Para que una persona la instale
+como app normal hay que generar un **build** con **EAS Build** (el servicio de
+compilación en la nube de Expo):
+
+```bash
+npm install -g eas-cli
+eas login              # cuenta gratuita de Expo
+eas init               # una sola vez, vincula el proyecto
+eas build --platform android
+```
+
+Ese proceso devuelve un **link para descargar la app** compilada (APK de prueba
+o AAB para la Play Store, según el perfil de build que se configure). Es un
+paso manual: requiere una cuenta de Expo propia y todavía no está automatizado
+en el repositorio.
+
 ### Variables de entorno (opcional)
 
 ```bash
