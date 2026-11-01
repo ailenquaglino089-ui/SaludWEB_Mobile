@@ -12,8 +12,14 @@ aplicada y comentada **línea por línea** en `GUIA_MOBILE.md`.
 
 - ✅ **Login JWT** optimizado para mobile: teclado de email, mostrar/ocultar contraseña,
   validación en tiempo real (onBlur) y autocompletado del sistema operativo.
+- ✅ **Registro desde el celular**: cada paciente crea su cuenta con Gmail/email y elige
+  su propia contraseña; luego debe usar esa misma contraseña para volver a entrar.
 - ✅ **Bottom Navigation Bar** sticky (patrón de la guía): Inicio, Pacientes, Médicos,
-  Recetas y Salir, siempre visibles en la zona del pulgar.
+  Recetas y Salir para el personal de salud; Inicio, Turnos y Salir para el paciente.
+  Los ítems se filtran por rol, siempre visibles en la zona del pulgar.
+- ✅ **Turnera del paciente**: reserva en pasos internos (profesional → día → horario →
+  confirmar) y pestaña "Mis turnos" para confirmar o cancelar. Si la cuenta todavía no
+  está vinculada a una ficha, permite ingresar el DNI y vincularla en la misma pantalla.
 - ✅ **Listados paginados** server-side con búsqueda (debounce 400ms), filtros por estado
   y cards apilables (ya no tablas).
 - ✅ **CRUD completo** (alta/edición/baja) en flujo único por módulo: formularios con
@@ -72,7 +78,7 @@ hecho**, se anota para dejar la decisión registrada:
   `ConfirmarModal.jsx` (confirmación de borrado) y `formularios/` (FormularioPaciente,
   FormularioMedico, FormularioPrescripcion).
 - `src/screens/` — Login, Bloqueo (candado biométrico), Dashboard, Pacientes, Medicos,
-  Prescripciones y `PagedList` (genérico).
+  Prescripciones, Turnos (reserva + mis turnos) y `PagedList` (genérico).
 - `src/context/AuthContext.jsx` — Sesión (login/logout/loginSSO) persistida localmente
   + estado de bloqueo/desbloqueo biométrico.
 - `src/config.js` — URL de la API, constantes y credenciales de SSO (`SSO`).
@@ -92,16 +98,78 @@ npm start            # levanta Expo Go / emulador
 > El backend tiene que estar corriendo (en `SaludWEB_Backend`: `composer run dev`,
 > en `http://127.0.0.1:8000`; **sin XAMPP ni MySQL**, con el PHP nativo y SQLite).
 > Hay un arranque de un solo clic en `SaludWEB_Web\scripts\iniciar_saludweb.bat`.
-> En navegador alcanza con ese valor; en emulador Android o celular físico ajustá
-> la URL según la sección siguiente.
+> En navegador alcanza con ese valor; en emulador Android, simulador iOS o
+> celular físico (Android o iPhone) ajustá la URL según la sección siguiente.
+
+> **Atajo para celular (Android o iPhone, cualquier marca):** ejecutá
+> `scripts\iniciar_mobile.bat`. Detecta la IP local (WiFi o cable), actualiza
+> `.env`, levanta la API en `0.0.0.0:8000` y abre Expo en modo LAN. Sirve igual
+> para un Redmi, un
+> Motorola, un Samsung, un iPhone o cualquier otro teléfono. Si el celular no
+> conecta, ejecutá como administrador `scripts\permitir_firewall_saludweb.bat`
+> para habilitar los puertos 8000 y 8081 solo en la subred local.
+>
+> Si ya tenés la app instalada: con **Expo Go**, volvé a escanear el QR después
+> de iniciar el script para cargar el código actualizado. Una app instalada como
+> **APK o build de iPhone** no se actualiza al cambiar el código fuente: hay que
+> generar e instalar una nueva versión.
+
+### Acceso recomendado por enlace (cualquier teléfono)
+
+Para que una persona use SaludWEB desde un teléfono actual sin importar la marca,
+la forma más simple es abrir la versión web desde Chrome o Safari. No necesita Expo Go
+ni instalar un APK:
+
+1. **En la misma Wi‑Fi que la PC:** abrir `http://<IP-DE-LA-PC>:5173`. La dirección
+   exacta aparece al ejecutar `SaludWEB_Web\scripts\iniciar_saludweb.bat`; por ejemplo,
+   `http://192.168.1.4:5173`. Este acceso local suele ser el más rápido.
+2. **Desde otra Wi‑Fi o con datos móviles:** abrir
+   <https://desktop-5f7743f.taileeeb72.ts.net>. La PC debe permanecer encendida,
+   conectada a Internet, con SaludWEB iniciado y Tailscale activo.
+3. En Android se puede usar Chrome → **Agregar a pantalla de inicio**; en iPhone,
+   Safari → **Compartir → Agregar a pantalla de inicio**. Es un acceso a la web, no una
+   instalación nativa. Si se había instalado antes, cerrarla y volver a abrir el enlace
+   actualiza los archivos web.
+4. En **Crear cuenta**, cada paciente elige su email (puede ser Gmail) y su propia
+   contraseña. Después inicia sesión con esa misma combinación. Escribir un email Gmail
+   no equivale a autenticar con Google; Google OAuth requiere configuración adicional.
+5. **Ver contraseña** muestra u oculta en pantalla lo que la persona está escribiendo;
+   no permite recuperar la clave guardada. El botón está disponible en el formulario de
+   la web y en la pantalla de login nativa.
+
+El enlace público funciona desde otras redes, pero depende de la PC y de sus servicios.
+No se garantiza en sistemas operativos tan antiguos que ya no puedan abrir sitios HTTPS
+modernos. Expo Go y los builds nativos son opciones de desarrollo/distribución distintas:
+Expo Go en LAN normalmente requiere que el celular y la PC estén en la misma red.
 
 ### Cómo usarlo en teléfonos (paso a paso)
 
-La app está hecha con **Expo SDK 53** (React Native) y hay tres caminos para
-llevarla a un teléfono, del más rápido al más formal. Los tres comparten un
-requisito: **el backend de SaludWEB tiene que estar corriendo**.
+La app está hecha con **Expo SDK 53** (React Native) y **no depende de la marca
+del teléfono**. Funciona en cualquier **Android** (Redmi, Motorola, Samsung,
+Xiaomi, etc.) o **iPhone**, siempre que el sistema operativo y Expo Go sean
+compatibles con el SDK del proyecto. Los caminos, del más rápido al más formal,
+son estos:
+
+| Camino | Sirve para | Requisito |
+|---|---|---|
+| Expo Go en un celular físico | Android e iPhone, cualquier marca | Misma WiFi que la PC y Expo Go compatible con SDK 53 |
+| Web en el navegador del celular | Android e iPhone, cualquier marca | PC sirviendo la web en `0.0.0.0:5173` y firewall habilitado |
+| Emulador Android | Probar sin celular | Android Studio |
+| Simulador iOS | Probar sin iPhone | macOS con Xcode |
+| Build instalable | Distribuir la app | EAS Build; en iPhone físico hace falta cuenta de Apple |
+
+> **Importante para iPhone:** la versión de Expo Go que se descarga hoy desde la
+> App Store suele aceptar solo el SDK más nuevo. Si al escanear el QR dice que el
+> proyecto usa SDK 53 y no es compatible, tenés tres salidas: probar en Android,
+> generar un **development build** con EAS, o actualizar el proyecto a un SDK que
+> soporte el Expo Go actual. En Android sí se puede instalar una versión anterior
+> de Expo Go desde `https://expo.dev/go`. **No se puede instalar un APK en un
+> iPhone**: para iOS hace falta un build firmado o el simulador en una Mac.
 
 #### Opción 1 — Tu celular físico con Expo Go (la más rápida)
+
+Sirve para cualquier Android (Redmi, Motorola, Samsung, Xiaomi, etc.) y para
+iPhone.
 
 1. **En la PC, levantar el backend escuchando en la red** (no solo en la propia
    máquina):
@@ -139,16 +207,104 @@ requisito: **el backend de SaludWEB tiene que estar corriendo**.
    El `--clear` hace falta si recién cambiaste el `.env`: Expo inyecta las
    variables en el momento de empaquetar, no las lee en caliente.
 
-5. **En el celular**: instalar **Expo Go** (Play Store o App Store), conectarlo
-   a **la misma red WiFi que la PC** y escanear el **código QR** que aparece en
-   la terminal con la cámara (o con la propia Expo Go).
+5. **Instalar Expo Go en el celular**:
 
-6. **Entrar**: registrar una cuenta desde la pantalla de Registro, o usar las
-   credenciales de prueba (ver "Credenciales de prueba" más abajo).
+   - **Android (Redmi, Motorola, Samsung, etc.):** desde Play Store. La versión
+     actual de Expo Go suele aceptar solo SDK 54 o superior, así que para este
+     proyecto hace falta **Expo Go 2.33.22 (SDK 53)**. Descarga directa oficial:
+     [Expo-Go-2.33.22.apk](https://github.com/expo/expo-go-releases/releases/download/Expo-Go-2.33.22/Expo-Go-2.33.22.apk).
+     En Android primero **desinstalá** el Expo Go actual (no deja bajar de
+     versión sin desinstalar) y después instalá ese APK. En **Xiaomi/Redmi**
+     habilitá "Instalar apps desconocidas" para el navegador o el administrador
+     de archivos cuando lo pida.
+   - **iPhone:** desde App Store. Si Expo Go rechaza el proyecto por el SDK,
+     usá un **development build** con EAS o actualizá el SDK del proyecto. No
+     existe instalación de APK en iPhone.
 
-> Si la app carga pero no conecta con el servidor, casi siempre es una de tres
-> cosas: la IP está mal escrita, el backend no está escuchando en `0.0.0.0`, o
-> el celular está en otra red (datos móviles en vez de WiFi).
+6. **Conectar el celular a la misma WiFi que la PC**. Para cualquier marca:
+   apagá los **datos móviles** y la **VPN**, evitá la red de invitados y las
+   redes con aislamiento de clientes. Si el router tiene 2,4 GHz y 5 GHz, usá
+   preferentemente la misma banda en la PC y en el celular.
+
+7. **Probar la red antes del QR** (muy útil en Xiaomi/Redmi): abrí en el
+   navegador del celular `http://IP_DE_LA_PC:8000/api/health`. Si responde
+   `{"status":"ok"}`, el celular llega a la PC y el problema es Expo Go. Si no
+   carga, revisá WiFi, datos móviles, VPN, firewall o aislamiento de clientes del
+   router.
+
+8. **Escanear el QR** que aparece en la terminal:
+   - **Android:** desde Expo Go o con la cámara del teléfono.
+   - **iPhone:** con la app Cámara o desde Expo Go.
+
+9. **Entrar**: crear una cuenta de paciente desde el enlace “Crear cuenta” en la pantalla
+   móvil, o usar una cuenta existente. El formulario envía email, contraseña y nombre a
+   `POST /api/auth/registro`; si el alta tiene éxito, inicia sesión con esas credenciales.
+
+> Si la app carga pero no conecta con el servidor, revisá esta lista: la IP del
+> `.env` coincide con la PC, el backend escucha en `0.0.0.0`, el celular está en
+> la misma WiFi (sin datos móviles ni VPN), el firewall tiene las reglas de los
+> puertos 8000, 8081 y 5173, y Expo Go es compatible con el SDK del proyecto.
+
+#### Cómo se implementó el acceso móvil
+
+1. `src/screens/Login.jsx` administra el modo **Iniciar sesión / Crear cuenta**, valida
+   nombre, email y coincidencia de las dos entradas de contraseña, y presenta botones
+   táctiles de mostrar/ocultar para ambos campos.
+2. `src/context/AuthContext.jsx` envía el alta a `/auth/registro` con rol `paciente`; el
+   backend guarda un hash, no la contraseña. Tras crearla, el contexto inicia sesión con
+   el mismo email y contraseña.
+3. `src/config.js` toma `EXPO_PUBLIC_API_URL` del entorno. En Expo Go por LAN se configura
+   con la IP de la PC y `/api`; esa variable se incorpora al bundle, así que los cambios
+   requieren reiniciar Expo con `npm start --clear`.
+4. La app móvil nativa y la web abierta por enlace son caminos diferentes. Para acceso
+   desde cualquier red sin compilar un APK, se recomienda el enlace web indicado arriba.
+
+##### Si algo no conecta o va lento
+
+| Síntoma | Qué revisar |
+|---|---|
+| El QR abre pero queda cargando | Mirá la ventana "SaludWEB Mobile": la primera vez Metro compila el bundle y puede tardar. Esperá a que diga "Bundled" y volvé a recargar. |
+| "No se puede conectar al servidor" | IP cambiada, backend escuchando solo en `127.0.0.1`, firewall o red de invitados. |
+| En iPhone dice que el SDK no es compatible | Expo Go de App Store no acepta SDK 53: usá Android, un development build con EAS o actualizá el SDK. |
+| En Android dice que el SDK no es compatible | Desinstalá Expo Go e instalá **Expo Go 2.33.22 (SDK 53)**: [APK oficial](https://github.com/expo/expo-go-releases/releases/download/Expo-Go-2.33.22/Expo-Go-2.33.22.apk). |
+| En Xiaomi/Redmi el QR no abre o queda cargando | Apagá datos móviles, VPN y "Asistente de Wi-Fi" (puede cambiar solo a datos); permití que Expo Go use la red local; comprobá en el navegador del celular que `http://IP_DE_LA_PC:8000/api/health` responde. Si dice SDK incompatible, instalá Expo Go 2.33.22. |
+| La primera carga tarda mucho | Es normal en la primera compilación. Cerrá otras apps de la PC y usá 5 GHz. Para una demo, `npx expo start --lan --no-dev --minify` genera un bundle más liviano. |
+| Se corta al cambiar de red | El celular y la PC tienen que seguir en la misma red; si la IP de la PC cambió, actualizá el `.env` y reiniciá Expo. |
+
+#### Opción 1B — Web desde el navegador del celular (sin Expo Go)
+
+La SPA web de SaludWEB también se abre desde Chrome o Safari en cualquier
+Android o iPhone, sin instalar nada. Es la web del proyecto, no la app mobile:
+sirve para una demo o para probar el flujo cuando Expo Go no es compatible o el
+QR falla.
+
+1. En la PC, levantar la web escuchando en la red:
+
+   ```bash
+   cd SaludWEB_Web
+   npm run dev -- --host 0.0.0.0 --port 5173
+   ```
+
+2. Habilitar el puerto 5173 en el firewall (solo la primera vez):
+
+   ```bat
+   SaludWEB_Mobile\scripts\permitir_firewall_saludweb.bat
+   ```
+
+3. En el celular, abrir en Chrome o Safari:
+
+   ```
+   http://IP_DE_LA_PC:5173
+   ```
+
+   Por ejemplo: `http://192.168.1.4:5173`.
+
+4. La web llama a `/api` y el proxy de Vite lo redirige al backend local, así
+   que no hay que configurar CORS para este caso.
+
+> Esta opción no reemplaza a la app mobile: es el camino más rápido para que
+> cualquier teléfono entre por navegador cuando Expo Go no es compatible o el
+> QR no conecta.
 
 #### Opción 2 — Emulador Android (en la PC, sin celular)
 
@@ -174,12 +330,18 @@ npm install -g eas-cli
 eas login              # cuenta gratuita de Expo
 eas init               # una sola vez, vincula el proyecto
 eas build --platform android
+eas build --platform ios
+# o las dos plataformas juntas:
+eas build --platform all
 ```
 
-Ese proceso devuelve un **link para descargar la app** compilada (APK de prueba
-o AAB para la Play Store, según el perfil de build que se configure). Es un
-paso manual: requiere una cuenta de Expo propia y todavía no está automatizado
-en el repositorio.
+Ese proceso devuelve un **link para descargar la app** compilada. En Android
+puede ser un APK de prueba o un AAB para Play Store; en iOS se genera un build
+firmado para TestFlight/App Store o para un iPhone registrado. **Para instalar
+en un iPhone físico hace falta una cuenta de Apple Developer** y el dispositivo
+registrado; el simulador de iOS no requiere esa cuenta pero sí una Mac con
+Xcode. Es un paso manual: requiere una cuenta de Expo propia y todavía no está
+automatizado en el repositorio.
 
 ### Variables de entorno (opcional)
 
@@ -202,8 +364,9 @@ backend nativo (`http://127.0.0.1:8000/api`).
 | `EXPO_PUBLIC_SSO_MICROSOFT_TENANT` | `common` | Tenant de Microsoft. |
 
 > Para probar contra el backend (nativo), según el dispositivo:
-> `10.0.2.2` (emulador Android), `127.0.0.1` (navegador) o la IP local del equipo
-> (celular físico). La URL es `http://127.0.0.1:8000/api` en navegador y
+> `10.0.2.2` (emulador Android), `127.0.0.1` (simulador iOS o navegador) o la IP
+> local del equipo (celular físico Android o iPhone). La URL es
+> `http://127.0.0.1:8000/api` en simulador/navegador y
 > `http://<IP-de-tu-PC>:8000/api` en el celular.
 
 > **Si cambiás el `.env`, reiniciá Expo con `npm start --clear`.** El valor se
@@ -366,15 +529,18 @@ servidor del sistema.
 
 ## ¿Se puede usar en otras computadoras (u otros celulares)?
 
-**Sí.** La app no está atada a un dispositivo.
+**Sí.** La app no está atada a un dispositivo, a una marca ni a un sistema
+operativo: funciona en cualquier Android (Redmi, Motorola, Samsung, Xiaomi,
+etc.) y en iPhone, siempre que Expo Go o el build sean compatibles con el SDK.
 
 ### En desarrollo
 
-- **Celular físico:** Expo Go (app gratuita) escaneando el QR que imprime `npm start`.
+- **Celular físico Android o iPhone:** Expo Go (app gratuita) escaneando el QR que imprime `npm start`. En iPhone, verificá la compatibilidad de SDK explicada arriba.
 - **Emulador Android:** la API se ve desde `http://10.0.2.2:8000/api`.
+- **Simulador iOS:** en una Mac con Xcode, la API se ve desde `http://127.0.0.1:8000/api`.
 - **Navegador:** `http://127.0.0.1:8000/api`.
 
-En los tres casos hace falta el backend corriendo (ver el README del Backend). Si
+En todos los casos hace falta el backend corriendo (ver el README del Backend). Si
 el celular es físico y va por WiFi, el backend tiene que escuchar en la red
 (`php -S 0.0.0.0:8000`) y la URL es `http://<IP-de-tu-PC>:8000/api` (ver la
 sección "Variables de entorno").
@@ -382,11 +548,14 @@ sección "Variables de entorno").
 ### Para distribuirla como app instalable
 
 Hoy corre con Expo Go. Para que cualquier persona la instale hay que generar un
-build (por ejemplo, con **EAS Build** de Expo) y publicarla o compartir el
-instalador. Es un paso aparte, todavía no incluido en el proyecto.
+build con **EAS Build** para Android, para iOS o para las dos plataformas, y
+publicarla o compartir el instalador. En Android alcanza un APK/AAB; en iPhone
+físico hace falta una cuenta de Apple Developer y registrar el dispositivo. Es un
+paso aparte, todavía no incluido en el proyecto.
 
 ### Lo que NO hace falta
 
+- Una marca o modelo específico: sirve cualquier Android o iPhone compatible.
 - iOS ni Android "con licencia": el emulador y Expo Go son gratuitos.
 - Un celular nuevo: la app es liviana (lista virtualizada, peticiones con tiempo máximo de espera).
 - Instalar nada en la PC del usuario final que solo quiera usar la web.
