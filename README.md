@@ -130,9 +130,13 @@ ni instalar un APK:
    Safari → **Compartir → Agregar a pantalla de inicio**. Es un acceso a la web, no una
    instalación nativa. Si se había instalado antes, cerrarla y volver a abrir el enlace
    actualiza los archivos web.
-4. En **Crear cuenta**, cada paciente elige su email (puede ser Gmail) y su propia
-   contraseña. Después inicia sesión con esa misma combinación. Escribir un email Gmail
-   no equivale a autenticar con Google; Google OAuth requiere configuración adicional.
+4. En **Crear cuenta**, cada persona se registra por su cuenta: no necesita que la
+   administradora le cree el usuario ni usar la cuenta de ella. Ingresa nombre, email
+   (puede ser Gmail) y la contraseña que eligió. El registro móvil crea una cuenta normal
+   de paciente; no otorga permisos de administradora. Después debe iniciar sesión con ese
+   mismo email y esa misma contraseña; una contraseña diferente no será aceptada.
+   Escribir un email Gmail no equivale a autenticar con Google ni verifica que la persona
+   controle esa dirección; Google OAuth requiere configuración adicional.
 5. **Ver contraseña** muestra u oculta en pantalla lo que la persona está escribiendo;
    no permite recuperar la clave guardada. El botón está disponible en el formulario de
    la web y en la pantalla de login nativa.
