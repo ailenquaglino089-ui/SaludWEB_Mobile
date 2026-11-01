@@ -126,6 +126,12 @@ ni instalar un APK:
 2. **Desde otra Wi‑Fi o con datos móviles:** abrir
    <https://desktop-5f7743f.taileeeb72.ts.net>. La PC debe permanecer encendida,
    conectada a Internet, con SaludWEB iniciado y Tailscale activo.
+   El enlace abre la **versión web adaptable**, no la app nativa de Expo. El lanzador web
+   compila la SPA, mantiene el Backend y sirve ambos por el mismo origen HTTPS: Tailscale
+   Funnel reenvía al gateway PHP local (`127.0.0.1:8001`), que entrega los archivos web y
+   pasa las rutas `/api/...` a `SaludWEB_Backend/index.php`. Por eso el navegador del
+   teléfono puede iniciar sesión con datos móviles sin cambiar la URL de API, habilitar
+   CORS para un dominio distinto ni instalar Tailscale en el teléfono.
 3. En Android se puede usar Chrome → **Agregar a pantalla de inicio**; en iPhone,
    Safari → **Compartir → Agregar a pantalla de inicio**. Es un acceso a la web, no una
    instalación nativa. Si se había instalado antes, cerrarla y volver a abrir el enlace
@@ -145,6 +151,10 @@ El enlace público funciona desde otras redes, pero depende de la PC y de sus se
 No se garantiza en sistemas operativos tan antiguos que ya no puedan abrir sitios HTTPS
 modernos. Expo Go y los builds nativos son opciones de desarrollo/distribución distintas:
 Expo Go en LAN normalmente requiere que el celular y la PC estén en la misma red.
+La URL de Funnel es pública: usá cuentas de prueba y no la consideres un entorno de
+producción para datos clínicos reales. Para Expo Go o un build nativo, la API móvil se
+configura aparte en `.env`; el enlace de Funnel descrito arriba es para abrir la SPA en el
+navegador.
 
 ### Cómo usarlo en teléfonos (paso a paso)
 
