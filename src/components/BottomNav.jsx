@@ -10,10 +10,22 @@ import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 // Estilos compartidos de la app (barraNavegacion, navItem, navActivo...).
 import { styles } from '../styles';
+// Rol de la sesión: define qué secciones tiene sentido mostrar.
+import { useAuth } from '../context/AuthContext';
 
 // Elementos críticos del menú principal (máx. 5 según la guía).
 // texto: etiqueta visible | icono: emoji | pantalla: destino en App.js
-const ELEMENTOS = [
+//
+// El paciente NO ve Pacientes, Médicos ni Recetas: son secciones de gestión
+// que no le corresponden (y Recetas lista prescripciones de todo el sistema).
+// Ve Inicio y Turnos, que es lo que necesita para pedir y seguir su turno.
+// El personal de salud mantiene el menú de gestión completo.
+const ELEMENTOS_PACIENTE = [
+  { texto: 'Inicio', icono: '🏠', pantalla: 'dashboard' },
+  { texto: 'Turnos', icono: '📅', pantalla: 'turnos' },
+];
+
+const ELEMENTOS_GESTION = [
   { texto: 'Inicio', icono: '🏠', pantalla: 'dashboard' },
   { texto: 'Pacientes', icono: '👤', pantalla: 'pacientes' },
   { texto: 'Médicos', icono: '👨‍⚕️', pantalla: 'medicos' },
@@ -25,6 +37,13 @@ const ELEMENTOS = [
 //  - navegar: función para cambiar de pantalla (setPantalla de App.js)
 //  - cerrarSesion: función de logout (último acceso de la barra)
 export default function BottomNav({ pantalla, navegar, cerrarSesion }) {
+  // El rol decide el conjunto de ítems. Si todavía no hay usuario (primer
+  // render), se usa el menú de gestión para no mostrar una barra vacía.
+  const { usuario } = useAuth();
+  const ELEMENTOS = usuario?.tipo_usuario === 'paciente'
+    ? ELEMENTOS_PACIENTE
+    : ELEMENTOS_GESTION;
+
   return (
     // Contenedor horizontal con borde superior (se dibuja siempre sobre el contenido)
     <View style={styles.barraNavegacion}>

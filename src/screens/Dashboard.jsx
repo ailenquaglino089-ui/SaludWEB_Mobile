@@ -99,7 +99,9 @@ export default function Dashboard() {
       {/* Aviso de navegación: las opciones críticas están en la barra inferior */}
       <View style={styles.tarjeta}>
         <Text style={styles.texto}>
-          📱 Usá la barra inferior para acceder a Pacientes, Médicos, Recetas y Salir.
+          {usuario?.tipo_usuario === 'paciente'
+            ? '📱 Usá la barra inferior para reservar y ver tus turnos, o para salir.'
+            : '📱 Usá la barra inferior para acceder a Pacientes, Médicos, Recetas y Salir.'}
         </Text>
       </View>
     </View>

@@ -41,13 +41,17 @@ const DESCUBRIMIENTO_MICROSOFT = {
 // Pantalla de login: valida credenciales contra POST /api/auth/login (+ SSO).
 export default function Login() {
   // Funciones del contexto: login clásico y login con id_token de SSO.
-  const { login, loginSSO } = useAuth();
+  const { login, registro, loginSSO } = useAuth();
   // Email ingresado por el usuario.
   const [email, setEmail] = useState('');
+  const [nombre, setNombre] = useState('');
   // Contraseña ingresada por el usuario.
   const [password, setPassword] = useState('');
+  const [confirmarPassword, setConfirmarPassword] = useState('');
   // True mientras se muestran los caracteres (toggle mostrar/ocultar).
   const [verPassword, setVerPassword] = useState(false);
+  const [verConfirmacion, setVerConfirmacion] = useState(false);
+  const [registrando, setRegistrando] = useState(false);
   // Estado de carga: bloquea el botón mientras se valida el login.
   const [cargando, setCargando] = useState(false);
   // True mientras el navegador de SSO está abierto (bloquea todos los accesos).
@@ -85,9 +89,15 @@ export default function Login() {
       email: validarEmail(email),
       password: validarPassword(password),
     };
+    if (registrando && !nombre.trim()) {
+      nuevoError.nombre = 'El nombre es obligatorio';
+    }
+    if (registrando && password !== confirmarPassword) {
+      nuevoError.confirmarPassword = 'Las contraseñas no coinciden';
+    }
     setErroresCampo(nuevoError);
     // Devuelve el primer mensaje de error que exista ('' si todos son válidos).
-    return nuevoError.email || nuevoError.password;
+    return nuevoError.nombre || nuevoError.email || nuevoError.password || nuevoError.confirmarPassword;
   };
 
   // Envía el formulario de login.
@@ -102,7 +112,9 @@ export default function Login() {
     setCargando(true);
     setError('');
     try {
-      // Se delega el login al contexto; si el backend responde 4xx, se lanza un Error.
+      if (registrando) {
+        await registro(email, password, nombre.trim());
+      }
       await login(email, password);
       // En éxito no se navega acá: la app detecta 'autenticado' y muestra el Dashboard solo.
     } catch (err) {
@@ -181,16 +193,36 @@ export default function Login() {
             fondos distintos necesita dos valores, o uno de los dos
             queda por debajo del mínimo. */}
         <View style={styles.tituloWrapper}>
-          <Text style={{ fontSize: 28, fontWeight: '700', textAlign: 'center', color: '#5669c6' }}>
-            🏥 SaludWEB
-          </Text>
+          <View style={styles.marcaFila}>
+            <Text style={{ fontSize: 28, fontWeight: '700', textAlign: 'center', color: '#5669c6' }}>
+              SaludWEB
+            </Text>
+            <View style={styles.marcaPro}>
+              <Text style={styles.marcaProTexto}>PRO</Text>
+            </View>
+          </View>
           <Text style={[styles.texto, { textAlign: 'center' }]}>Sistema de Gestión de Salud</Text>
         </View>
 
         {/* Tarjeta blanca con el formulario (una sola pantalla) */}
         <View style={styles.tarjeta}>
-          {/* Error general del login (si lo hay) */}
+          {/* Error general del acceso (si lo hay) */}
           {error ? <Text style={styles.error}>{error}</Text> : null}
+
+          {registrando ? (
+            <>
+              <Text style={styles.label}>Nombre completo</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Tu nombre"
+                value={nombre}
+                onChangeText={setNombre}
+                autoCapitalize="words"
+                editable={!cargando && !cargandoSso}
+              />
+              {erroresCampo.nombre ? <Text style={styles.errorCampo}>{erroresCampo.nombre}</Text> : null}
+            </>
+          ) : null}
 
           {/* Campo de email */}
           <Text style={styles.label}>Email</Text>
@@ -211,7 +243,7 @@ export default function Login() {
           {erroresCampo.email ? <Text style={styles.errorCampo}>{erroresCampo.email}</Text> : null}
 
           {/* Campo de contraseña con botón mostrar/ocultar */}
-          <Text style={styles.label}>Contraseña</Text>
+          <Text style={styles.label}>{registrando ? 'Elegí una contraseña' : 'Contraseña'}</Text>
           {/* Contenedor en fila: input + botón ocular */}
           <View style={styles.contrasenaWrapper}>
             <TextInput
@@ -225,18 +257,48 @@ export default function Login() {
               textContentType="password"            // iOS sugiere contraseñas guardadas
               editable={!cargando && !cargandoSso}
             />
-            {/* Botón táctil (>= 44px) que alterna mostrar/ocultar la contraseña */}
+            {/* Botón táctil con texto claro para alternar mostrar/ocultar en teléfonos */}
             <TouchableOpacity
               onPress={() => setVerPassword(!verPassword)}
               style={styles.botonMostrar}
+              disabled={cargando || cargandoSso}
               accessibilityRole="button"
               accessibilityLabel={verPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+              accessibilityState={{ disabled: cargando || cargandoSso, selected: verPassword }}
             >
-              <Text style={styles.botonMostrarTexto}>{verPassword ? '🙈' : '👁️'}</Text>
+              <Text style={styles.botonMostrarTexto}>{verPassword ? 'Ocultar' : 'Ver contraseña'}</Text>
             </TouchableOpacity>
           </View>
           {/* Error específico del campo contraseña */}
           {erroresCampo.password ? <Text style={styles.errorCampo}>{erroresCampo.password}</Text> : null}
+
+          {registrando ? (
+            <>
+              <Text style={styles.label}>Repetí la contraseña</Text>
+              <View style={styles.contrasenaWrapper}>
+                <TextInput
+                  style={[styles.input, { flex: 1, borderWidth: 0, marginBottom: 0 }]}
+                  placeholder="Repetí la contraseña"
+                  value={confirmarPassword}
+                  onChangeText={setConfirmarPassword}
+                  secureTextEntry={!verConfirmacion}
+                  autoComplete="new-password"
+                  textContentType="newPassword"
+                  editable={!cargando && !cargandoSso}
+                />
+                <TouchableOpacity
+                  onPress={() => setVerConfirmacion(!verConfirmacion)}
+                  style={styles.botonMostrar}
+                  disabled={cargando || cargandoSso}
+                  accessibilityRole="button"
+                  accessibilityLabel={verConfirmacion ? 'Ocultar confirmación' : 'Ver confirmación'}
+                >
+                  <Text style={styles.botonMostrarTexto}>{verConfirmacion ? 'Ocultar' : 'Ver contraseña'}</Text>
+                </TouchableOpacity>
+              </View>
+              {erroresCampo.confirmarPassword ? <Text style={styles.errorCampo}>{erroresCampo.confirmarPassword}</Text> : null}
+            </>
+          ) : null}
 
           {/* Botón de envío: muestra ActivityIndicator mientras procesa */}
           <TouchableOpacity
@@ -247,12 +309,27 @@ export default function Login() {
             {cargando ? (
               <ActivityIndicator color="#fff" /> // Ruleta giratoria mientras valida
             ) : (
-              <Text style={styles.botonPrimarioTexto}>Iniciar Sesión</Text>
+              <Text style={styles.botonPrimarioTexto}>{registrando ? 'Crear cuenta' : 'Iniciar Sesión'}</Text>
             )}
           </TouchableOpacity>
 
+          <TouchableOpacity
+            onPress={() => {
+              setRegistrando(!registrando);
+              setError('');
+              setErroresCampo({});
+            }}
+            disabled={cargando || cargandoSso}
+            accessibilityRole="button"
+            style={{ paddingVertical: 14, alignItems: 'center' }}
+          >
+            <Text style={{ color: '#4338ca', fontSize: 15, fontWeight: '600' }}>
+              {registrando ? '¿Ya tenés cuenta? Iniciá sesión' : '¿No tenés cuenta? Crear cuenta'}
+            </Text>
+          </TouchableOpacity>
+
           {/* Sección de SSO: solo se muestra si hay al menos un proveedor configurado */}
-          {(SSO.googleClientId || SSO.microsoftClientId) ? (
+          {!registrando && (SSO.googleClientId || SSO.microsoftClientId) ? (
             <View>
               {/* Separador "o continuá con..." */}
               <View style={styles.separadorSso}>

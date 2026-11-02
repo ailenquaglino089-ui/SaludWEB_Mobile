@@ -56,6 +56,27 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 20,
   },
+  // Fila de la marca: nombre + distintivo "PRO" alineados horizontalmente.
+  marcaFila: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  // Distintivo "PRO": píldora clara que acompaña al nombre de la app.
+  marcaPro: {
+    marginLeft: 6,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 999,
+    backgroundColor: '#e0e7ff',
+  },
+  // Texto del distintivo. Índigo oscuro sobre el lavado claro: contraste alto.
+  marcaProTexto: {
+    fontSize: 12,
+    fontWeight: '700',
+    letterSpacing: 1,
+    color: '#4338ca',
+  },
   // Etiqueta de los campos del formulario.
   label: {
     fontSize: 16,         // 16px: mínimo recomendado para mobile (guía: legibilidad)
@@ -201,9 +222,11 @@ export const styles = StyleSheet.create({
     minHeight: 44,               // Altura táctil mínima 44px (guía)
   justifyContent: 'center',
   },
-  // Ícono del botón mostrar/ocultar.
+  // Texto del botón mostrar/ocultar.
   botonMostrarTexto: {
-  fontSize: 18,
+    color: '#5669c6',
+    fontSize: 14,
+    fontWeight: '600',
   },
   // Mensaje de error específico de un campo (validación onBlur).
   errorCampo: {
@@ -371,5 +394,181 @@ export const styles = StyleSheet.create({
     color: '#333',      // Gris oscuro (contraste > 7:1 sobre blanco, WCAG AA)
     fontWeight: '600',  // Seminegrita
     fontSize: 16,       // 16px: tamaño legible para el pulgar (guía)
+  },
+
+  // --- Estilos de la turnera (reserva de turnos desde el celular) ---
+
+  // Fila de pestañas "Reservar / Mis turnos".
+  turnoTabs: {
+    flexDirection: 'row',
+    gap: 8,
+    marginBottom: 12,
+  },
+  // Pestaña individual: mismo alto táctil que el resto de los controles.
+  turnoTab: {
+    flex: 1,
+    minHeight: 44,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#767676',
+    backgroundColor: '#ffffff',
+  },
+  // Pestaña activa: se pinta con el violeta de marca.
+  turnoTabActivo: {
+    backgroundColor: '#5a6fd0',
+    borderColor: '#5a6fd0',
+  },
+  // Texto de la pestaña inactiva.
+  turnoTabTexto: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#333',
+  },
+  // Texto de la pestaña activa (blanco sobre violeta, 4.55:1).
+  turnoTabTextoActivo: {
+    color: '#ffffff',
+  },
+  // Título de sección dentro de una tarjeta (más chico que `titulo`).
+  subtitulo: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#333',
+    marginBottom: 8,
+    flexShrink: 1,
+  },
+  // Tarjeta táctil de un profesional en el catálogo.
+  opcionMedico: {
+    borderWidth: 2,
+    borderColor: '#e0e0e0',
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 8,
+    backgroundColor: '#ffffff',
+  },
+  // Nombre del profesional dentro de la opción.
+  opcionTitulo: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#333',
+  },
+  // Dato secundario de la opción (especialidad, matrícula, motivo).
+  opcionMeta: {
+    fontSize: 14,
+    color: '#555',
+    marginTop: 2,
+  },
+  // Fila de chips de días.
+  chipsFila: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+    marginBottom: 12,
+  },
+  // Chip de día: alto táctil de 44px.
+  chip: {
+    minHeight: 44,
+    minWidth: 64,
+    paddingHorizontal: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#767676',
+    backgroundColor: '#ffffff',
+  },
+  // Chip del día seleccionado.
+  chipActivo: {
+    backgroundColor: '#5a6fd0',
+    borderColor: '#5a6fd0',
+  },
+  // Texto del chip inactivo.
+  chipTexto: {
+    fontSize: 14,
+    color: '#333',
+  },
+  // Texto del chip seleccionado.
+  chipTextoActivo: {
+    color: '#ffffff',
+    fontWeight: '700',
+  },
+  // Grilla de horarios (los botones se acomodan en varias filas).
+  slotsCuadricula: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+    marginBottom: 12,
+  },
+  // Botón de un horario disponible.
+  slotBoton: {
+    minWidth: 78,
+    minHeight: 44,
+    paddingHorizontal: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#767676',
+    backgroundColor: '#ffffff',
+  },
+  // Horario seleccionado.
+  slotBotonActivo: {
+    backgroundColor: '#5a6fd0',
+    borderColor: '#5a6fd0',
+  },
+  // Texto del horario.
+  slotTexto: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#333',
+  },
+  // Texto del horario seleccionado.
+  slotTextoActivo: {
+    color: '#ffffff',
+  },
+  // Horario ocupado: se muestra apagado y no se puede tocar.
+  slotOcupado: {
+    backgroundColor: '#f0f0f0',
+    borderColor: '#e0e0e0',
+  },
+  // Texto del horario ocupado.
+  slotOcupadoTexto: {
+    fontSize: 12,
+    color: '#6e6e6e',
+  },
+  // Fila de botones de acción dentro de una tarjeta.
+  filaBotones: {
+    flexDirection: 'row',
+    gap: 8,
+    marginTop: 8,
+    marginBottom: 4,
+  },
+  // Resumen del turno antes de confirmar.
+  resumen: {
+    backgroundColor: '#eef0fb',
+    borderRadius: 8,
+    padding: 12,
+    marginTop: 8,
+    marginBottom: 12,
+  },
+  // Turno dentro de "Mis turnos": separador entre uno y otro.
+  turnoItem: {
+    borderBottomWidth: 1,
+    borderBottomColor: '#e0e0e0',
+    paddingVertical: 10,
+  },
+  // Fecha y hora del turno.
+  turnoFecha: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#333',
+  },
+  // Estado del turno (pendiente, confirmada, cancelada...).
+  turnoEstado: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#4338ca',
+    marginTop: 2,
   },
 });

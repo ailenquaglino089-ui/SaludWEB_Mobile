@@ -109,6 +109,14 @@ export function AuthProvider({ children }) {
     setDesbloqueado(true);
   };
 
+  // Crea una cuenta de paciente desde la app móvil.
+  const registro = async (email, password, nombre) => {
+    return api('/auth/registro', {
+      method: 'POST',
+      body: { email, password, nombre, tipo_usuario: 'paciente' },
+    });
+  };
+
   // Inicia sesión con SSO (Google / Microsoft).
   // El id_token lo obtiene la pantalla de Login tras el flujo del proveedor;
   // acá se lo entrega al backend, que verifica la firma y emite el JWT propio.
@@ -160,6 +168,7 @@ export function AuthProvider({ children }) {
     bioPreferido,
     desbloqueado,
     login,
+    registro,
     loginSSO,       // Inicia sesión con SSO (Google / Microsoft) usando el id_token.
     logout,
     desbloquear, //     Marca la sesión como desbloqueada (tras validar biometría).

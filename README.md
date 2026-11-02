@@ -8,6 +8,11 @@ Consume la **misma API REST** que la SPA web (JWT, roles: admin / médico / paci
 Guía del docente **"Adaptar el sistema a mobile: De escritorio a la palma de la mano"**
 aplicada y comentada **línea por línea** en `GUIA_MOBILE.md`.
 
+En esta entrega se sumaron el **registro desde el celular** (cada paciente elige
+su email y su contraseña), la pantalla **Turnos** con reserva paso a paso y
+"Mis turnos", y la documentación del **acceso por enlace** para abrir la versión
+web/PWA desde cualquier WiFi o con datos móviles, sin depender de Expo Go.
+
 ## Características
 
 - ✅ **Login JWT** optimizado para mobile: teclado de email, mostrar/ocultar contraseña,

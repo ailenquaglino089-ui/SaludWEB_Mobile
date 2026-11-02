@@ -8,10 +8,11 @@
 // La decisión de NO usar react-navigation es deliberada y conviene
 // entenderla antes de tocar este archivo:
 //
-//   - La app tiene 4 secciones y una barra inferior fija. Con
+//   - La app tiene 4 secciones de gestión (Inicio, Pacientes, Médicos,
+//     Recetas) más Turnos para pacientes, y una barra inferior fija. Con
 //     react-navigation habría que declarar un navigator por tab, un
 //     stack anidado y configuración de transiciones, para navegación que en
-//     total son 4 pantallas y un useState.
+//     total son 5 pantallas y un useState.
 //   - Sin librería, el flujo de la sesión es legible de punta a punta en
 //     este archivo: se entra, se ve si hay sesión, se desbloquea o no, y
 //     se elige la pantalla. Con un navigator, ese mismo flujo quedaría
@@ -19,11 +20,13 @@
 //
 // El costo es que no hay historial de navegación: el botón "atrás" del
 // sistema operativo no funciona dentro de la app, porque no hay stack que
-// la app pueda popear. Con 4 secciones planas no se nota. Si alguna vez se
-// agrega un flujo de varios pasos (por ejemplo, agendar un turno yendo por
-// paciente > médico > horario > confirmar), SÍ va a hacer falta
-// react-navigation, y en ese momento conviene migrar en vez de seguir
-// encadenando estados.
+// la app pueda popear. Con secciones planas no se nota. La reserva de turnos
+// es un flujo de varios pasos, pero se resolvió con pasos INTERNOS de la
+// pantalla Turnos (médico > día > horario > confirmar) y no encadenando
+// claves de pantalla: así el botón "atrás" del sistema no tiene un historial
+// a medio construir que deshacer, y la barra inferior sigue visible. Si en
+// el futuro se necesita historial real (volver paso a paso con el gesto del
+// sistema), ahí sí conviene migrar a react-navigation.
 import React, { useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 // SafeAreaView, no View: en iPhone con notch, un View a pantalla completa
@@ -41,6 +44,7 @@ import Dashboard from './src/screens/Dashboard';
 import Pacientes from './src/screens/Pacientes';
 import Medicos from './src/screens/Medicos';
 import Prescripciones from './src/screens/Prescripciones';
+import Turnos from './src/screens/Turnos';
 
 // Componente raíz: decide qué pantalla mostrar según sesión y navegación.
 function ContenidoApp() {
@@ -88,6 +92,8 @@ function ContenidoApp() {
         return <Medicos />;           // Listado de médicos
       case 'prescripciones':
         return <Prescripciones />;    // Listado de prescripciones
+      case 'turnos':
+        return <Turnos />;            // Reserva y "Mis turnos" (paciente)
       default:
         return <Dashboard />;         // Pantalla de inicio
     }
