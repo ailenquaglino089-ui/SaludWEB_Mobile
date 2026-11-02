@@ -62,23 +62,64 @@ export default function FormularioPrescripcion({ inicial, onGuardado, onCancelar
   // True mientras se guarda: bloquea botones y campos.
   const [cargando, setCargando] = useState(false);
 
+  // Recorre TODAS las páginas de /api/pacientes.
+  //
+  // El endpoint es paginado: pedir una sola página con por_pagina=100 deja
+  // afuera a los pacientes que están en las páginas siguientes. Eso no se
+  // nota con pocos datos, pero con una base real el selector muestra solo los
+  // primeros y parece que los demás "no existen". Se pide el máximo permitido
+  // y se avanza hasta la última página que informa el backend.
+  const cargarPacientes = async () => {
+    const items = [];
+    let pagina = 1;
+    let totalPaginas = 1;
+
+    do {
+      const data = await api('/pacientes', {
+        params: { pagina, por_pagina: 100 },
+      });
+      // Se aceptan las dos formas del contrato: array plano (compatibilidad)
+      // o el objeto paginado { items, total_paginas } que devuelve hoy la API.
+      const itemsPagina = Array.isArray(data) ? data : (data.items || []);
+      items.push(...itemsPagina);
+      totalPaginas = Array.isArray(data)
+        ? 1
+        : Math.max(1, Number(data.total_paginas) || 1);
+      pagina += 1;
+    } while (pagina <= totalPaginas);
+
+    return items;
+  };
+
   // En modo ALTA: al montar se descargan pacientes (requieren token JWT)
   // para poder elegir a quién se prescribe.
   useEffect(() => {
     if (inicial) return; // En edición no hace falta el catálogo
-    api('/pacientes', { params: { por_pagina: 100 } })
+    let cancelado = false;
+
+    cargarPacientes()
       // De cada paciente se arma {valor: id, etiqueta: "Nombre (DNI)"} del Selector
-      .then((data) => {
-        const lista = (data.items || []).map((p) => ({
+      .then((lista) => {
+        if (cancelado) return;
+        setPacientes(lista.map((p) => ({
           valor: p.id,
           etiqueta: p.nombre + (p.dni ? ` (${p.dni})` : ''),
-        }));
-        setPacientes(lista);
+        })));
       })
       // Si falla la descarga, el Selector quedará sin opciones (y mostrará "Sin opciones")
-      .catch(() => setPacientes([]))
+      .catch(() => {
+        if (!cancelado) setPacientes([]);
+      })
       // En todos los casos finaliza el estado de carga del catálogo
-      .finally(() => setCargandoPacientes(false));
+      .finally(() => {
+        if (!cancelado) setCargandoPacientes(false);
+      });
+
+    // Evita actualizar estado si la pantalla se cierra antes de que responda
+    // la última página.
+    return () => {
+      cancelado = true;
+    };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Actualiza un solo campo (nombre o dosis) de un medicamento en el índice dado.

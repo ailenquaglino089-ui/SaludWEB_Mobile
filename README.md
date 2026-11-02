@@ -437,6 +437,30 @@ Para volver a dejar los datos de demostración como estaban, en el backend:
 - La cronología del trabajo reciente en los tres repositorios está en el
   [registro de cambios](https://github.com/ailenquaglino089-ui/SaludWEB_Web/blob/main/REGISTRO_DE_CAMBIOS.md).
 
+### Selector de pacientes del formulario de prescripciones
+
+Archivo: `src/components/formularios/FormularioPrescripcion.jsx`, líneas 54-121.
+
+El endpoint `GET /api/pacientes` es paginado y devuelve
+`{ items, total, total_paginas, ... }`. La app pedía una sola página
+(`por_pagina=100`), así que con más de 100 pacientes el selector quedaba
+incompleto.
+
+- `cargarPacientes()` recorre todas las páginas con
+  `params: { pagina, por_pagina: 100 }`.
+- Acepta tanto un array plano (contrato viejo) como el objeto paginado actual.
+- Acumula los `items` de cada página y calcula el total con
+  `Math.max(1, Number(data.total_paginas) || 1)`.
+- Usa una bandera `cancelado` en el `useEffect` para no actualizar el estado
+  después de desmontar la pantalla (evita el warning de React y carreras entre
+  peticiones).
+- Si la carga falla, deja `pacientes` vacío y muestra el error; no rompe el
+  formulario.
+
+La misma API y las mismas reglas de rol se comparten con la web: un médico crea
+y edita prescripciones, un admin elimina y cualquier usuario autenticado puede
+cambiar el estado.
+
 ## Calidad del software
 
 Aplicacion de "Calidad Profesional del Software": logging estructurado, identificador de
