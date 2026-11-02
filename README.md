@@ -461,6 +461,25 @@ La misma API y las mismas reglas de rol se comparten con la web: un médico crea
 y edita prescripciones, un admin elimina y cualquier usuario autenticado puede
 cambiar el estado.
 
+## Publicar cambios en GitHub (paso a paso)
+
+Este repositorio se publica en
+`https://github.com/ailenquaglino089-ui/SaludWEB_Mobile.git`, rama
+`docs/access-connectivity`. Desde la carpeta `SaludWEB_Mobile`:
+
+```bash
+git status                         # 1. Ver qué archivos cambiaron
+git diff                           # 2. Revisar el contenido antes de subirlo
+git add README.md src/components/formularios/FormularioPrescripcion.jsx
+git commit -m "fix: cargar todos los pacientes en prescripciones"
+git push origin docs/access-connectivity
+git log --oneline -1               # 6. Confirmar el commit publicado
+git status -sb                     # 7. Debe quedar sin cambios pendientes
+```
+
+Antes de publicar, ejecutar `npm test`. No subir `node_modules/`, `.env` ni
+credenciales; esos archivos están cubiertos por `.gitignore`.
+
 ## Calidad del software
 
 Aplicacion de "Calidad Profesional del Software": logging estructurado, identificador de
