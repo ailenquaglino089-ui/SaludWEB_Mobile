@@ -468,17 +468,29 @@ Este repositorio se publica en
 `docs/access-connectivity`. Desde la carpeta `SaludWEB_Mobile`:
 
 ```bash
-git status                         # 1. Ver qué archivos cambiaron
-git diff                           # 2. Revisar el contenido antes de subirlo
-git add README.md src/components/formularios/FormularioPrescripcion.jsx
-git commit -m "fix: cargar todos los pacientes en prescripciones"
-git push origin docs/access-connectivity
-git log --oneline -1               # 6. Confirmar el commit publicado
-git status -sb                     # 7. Debe quedar sin cambios pendientes
+npm test                           # 1. Pruebas unitarias
+git status                         # 2. Ver qué archivos cambiaron
+git diff                           # 3. Revisar el contenido antes de subirlo
+git add README.md src/components/formularios/FormularioPrescripcion.jsx  # 4. Preparar archivos
+git commit -m "fix: cargar todos los pacientes en prescripciones"        # 5. Crear commit
+git push origin docs/access-connectivity                                # 6. Subir a GitHub
+git log --oneline -1               # 7. Confirmar el commit publicado
+git status -sb                     # 8. Debe quedar sin cambios pendientes
 ```
 
-Antes de publicar, ejecutar `npm test`. No subir `node_modules/`, `.env` ni
-credenciales; esos archivos están cubiertos por `.gitignore`.
+Qué hace cada línea:
+
+1. `npm test`: corre las pruebas de Node de la app móvil.
+2. `git status`: lista archivos modificados, nuevos y sin seguimiento.
+3. `git diff`: revisa el cambio exacto antes de publicarlo.
+4. `git add ...`: prepara solo el README y el formulario de prescripciones.
+5. `git commit`: crea el commit local con el mensaje del fix.
+6. `git push`: sube la rama `docs/access-connectivity` a GitHub.
+7. `git log --oneline -1`: confirma el hash del commit publicado.
+8. `git status -sb`: confirma que la rama local quedó igual a `origin`.
+
+No subir `node_modules/`, `.env` ni credenciales; esos archivos están cubiertos
+por `.gitignore`.
 
 ## Calidad del software
 
