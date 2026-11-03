@@ -671,7 +671,7 @@ export default function Turnos() {
                   {turno.fecha} · {turno.hora} hs
                 </Text>
                 <Text style={styles.opcionMeta}>
-                  Dr(a). {turno.medico_nombre || 'Profesional'}
+                  Dr(a). {turno.nombre_medico || 'Profesional'}
                   {turno.especialidad ? ` — ${turno.especialidad}` : ''}
                 </Text>
                 {turno.motivo ? (

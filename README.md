@@ -461,19 +461,35 @@ La misma API y las mismas reglas de rol se comparten con la web: un médico crea
 y edita prescripciones, un admin elimina y cualquier usuario autenticado puede
 cambiar el estado.
 
+### Nombre del médico en "Mis turnos"
+
+Archivo: `src/screens/Turnos.jsx`, línea 674.
+
+La API de citas devuelve `nombre_medico` y `especialidad`. La pantalla leía
+`turno.medico_nombre`, una clave que no existe en la respuesta, así que el turno
+mostraba `Dr(a). Profesional` aunque el médico estuviera asignado.
+
+- `{turno.nombre_medico || 'Profesional'}` usa la clave real y deja el texto
+  genérico solo si la API no trae el nombre.
+- `{turno.especialidad ? ' - ' + turno.especialidad : ''}` muestra la
+  especialidad con el mismo campo que devuelve la API.
+
+La web tenía el mismo error en `MisTurnos.jsx`, `Dashboard.jsx` y
+`AgendaMedico.jsx`; se corrigió allí también.
+
 ## Publicar cambios en GitHub (paso a paso)
 
 Este repositorio se publica en
-`https://github.com/ailenquaglino089-ui/SaludWEB_Mobile.git`, rama
-`docs/access-connectivity`. Desde la carpeta `SaludWEB_Mobile`:
+`https://github.com/ailenquaglino089-ui/SaludWEB_Mobile.git`, rama `main`. Desde
+la carpeta `SaludWEB_Mobile`:
 
 ```bash
 npm test                           # 1. Pruebas unitarias
 git status                         # 2. Ver qué archivos cambiaron
 git diff                           # 3. Revisar el contenido antes de subirlo
-git add README.md src/components/formularios/FormularioPrescripcion.jsx  # 4. Preparar archivos
-git commit -m "fix: cargar todos los pacientes en prescripciones"        # 5. Crear commit
-git push origin docs/access-connectivity                                # 6. Subir a GitHub
+git add README.md src/screens/Turnos.jsx  # 4. Preparar archivos
+git commit -m "fix: mostrar nombre del medico en mis turnos"  # 5. Crear commit
+git push origin main               # 6. Subir a GitHub
 git log --oneline -1               # 7. Confirmar el commit publicado
 git status -sb                     # 8. Debe quedar sin cambios pendientes
 ```
@@ -483,9 +499,9 @@ Qué hace cada línea:
 1. `npm test`: corre las pruebas de Node de la app móvil.
 2. `git status`: lista archivos modificados, nuevos y sin seguimiento.
 3. `git diff`: revisa el cambio exacto antes de publicarlo.
-4. `git add ...`: prepara solo el README y el formulario de prescripciones.
+4. `git add ...`: prepara solo el README y la pantalla de turnos.
 5. `git commit`: crea el commit local con el mensaje del fix.
-6. `git push`: sube la rama `docs/access-connectivity` a GitHub.
+6. `git push`: sube la rama `main` a GitHub.
 7. `git log --oneline -1`: confirma el hash del commit publicado.
 8. `git status -sb`: confirma que la rama local quedó igual a `origin`.
 
