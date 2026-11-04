@@ -477,6 +477,35 @@ mostraba `Dr(a). Profesional` aunque el médico estuviera asignado.
 La web tenía el mismo error en `MisTurnos.jsx`, `Dashboard.jsx` y
 `AgendaMedico.jsx`; se corrigió allí también.
 
+## Iteración 04/11/2026: turnera con profesionales activos
+
+En esta iteración **no se modificó código de la app móvil**. El problema estaba en los
+datos del backend (especialidades sin médicos activos) y en el selector de la web
+(`CatalogoTurnera.jsx`), no en las pantallas mobile. La app sigue consumiendo la misma API
+y no necesita campos nuevos.
+
+- **`src/screens/Turnos.jsx`, línea 674** - "Mis turnos" sigue leyendo
+  `turno.nombre_medico` y `turno.especialidad`, que son las claves reales de la API. Los
+  turnos reservados con los profesionales nuevos muestran el mismo formato que antes.
+- **Catálogo de turnos** - La app usa `GET /api/medicos` con `activo: 1`; el backend ahora
+  devuelve profesionales activos en Cardiología, Dermatología y Clínica Médica, además de
+  los que ya existían. No hubo que cambiar la pantalla ni el cliente HTTP.
+- **Agenda** - `GET /api/disponibilidades?id_medico=<id>` devuelve los cinco bloques
+  nuevos de lunes a viernes (09:00-13:00) y `GET /api/citas/disponibilidad` genera los
+  horarios de 30 minutos con la misma lógica que ya consumía la app.
+- **Sin cambios de contrato** - No se agregaron campos, rutas ni parámetros. Por eso la
+  versión móvil sigue siendo compatible sin recompilar.
+
+Verificación ejecutada en esta iteración:
+
+- `npm test`: **27/27** pruebas OK (los warnings de `MODULE_TYPELESS_PACKAGE_JSON` son
+  conocidos y no afectan el resultado).
+- La API pública `https://saludweb.taileeeb72.ts.net/api/especialidades` devuelve seis
+  especialidades con profesionales activos; la web y el backend ya fueron verificados por
+  separado.
+- No se agregaron datos de prueba en la base desde Mobile: los profesionales y la agenda
+  los administra el backend con `sembrar_turnera_demo.php`.
+
 ## Publicar cambios en GitHub (paso a paso)
 
 Este repositorio se publica en
