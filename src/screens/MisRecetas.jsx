@@ -94,7 +94,7 @@ export default function MisRecetas() {
                 .join(', ')}
             </Text>
             <Text style={styles.texto}>Médico: {item.nombre_medico || '—'}</Text>
-            <Text style={styles.texto}>Fecha: {item.fecha_emision || '—'}</Text>
+            <Text style={styles.texto}>Fecha de Emisión: {item.fecha_emision || '—'}</Text>
             <Text style={[styles.texto, { color: colorEstado(item.estado), fontWeight: '700' }]}>
               {etiquetaEstado(item.estado)}
             </Text>

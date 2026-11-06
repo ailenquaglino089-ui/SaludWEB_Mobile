@@ -600,6 +600,32 @@ backend responde `403` si el rol no corresponde, aunque se fuerce la pantalla.
   validación es la suite de tests, el contrato HTTP y la revisión de la navegación por rol.
 - Los datos de prueba se borraron y las secuencias se restauraron; no se crearon usuarios.
 
+## Iteración 06/11/2026: etiqueta de fecha en Mis recetas
+
+La tarjeta de cada receta mostraba `Fecha:` y no indicaba qué fecha era. El dato ya venía
+correcto desde la API (`fecha_emision`); el problema era solo la etiqueta de presentación.
+Se unificó con la Web, que usa **Fecha de Emisión**, sin tocar la API, los permisos ni los
+datos.
+
+### `src/screens/MisRecetas.jsx`, línea por línea
+
+- **Línea 96** — `Médico: {item.nombre_medico || '—'}` se mantiene igual: la etiqueta ya
+  estaba bien escrita y muestra el profesional que emitió la receta.
+- **Línea 97** — La etiqueta pasa de `Fecha:` a `Fecha de Emisión:`. El valor sigue siendo
+  `item.fecha_emision` y el guion `—` sigue cubriendo el caso de una receta histórica sin
+  fecha. El cambio hace explícito qué fecha se está mostrando y elimina la ambigüedad con
+  otras fechas posibles, como la de vencimiento.
+- **Líneas 98-100** — No cambian: el estado se sigue mostrando con `colorEstado()` y
+  `etiquetaEstado()`. La corrección es exclusivamente textual.
+
+### Verificación ejecutada
+
+- `npm test`: **27/27** pruebas OK.
+- Se revisó `src/` para confirmar que no quedan etiquetas `Fecha:` ni texto con mojibake.
+- No se ejecutó una prueba visual en emulador o dispositivo físico; la validación es la
+  suite de tests y la inspección del texto renderizado por la tarjeta.
+- No se modificaron la base de datos, el backend ni los permisos de recetas.
+
 ## Publicar cambios en GitHub (paso a paso)
 
 Este repositorio se publica en
