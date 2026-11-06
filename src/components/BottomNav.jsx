@@ -16,19 +16,25 @@ import { useAuth } from '../context/AuthContext';
 // Elementos críticos del menú principal (máx. 5 según la guía).
 // texto: etiqueta visible | icono: emoji | pantalla: destino en App.js
 //
-// El paciente NO ve Pacientes, Médicos ni Recetas: son secciones de gestión
-// que no le corresponden (y Recetas lista prescripciones de todo el sistema).
-// Ve Inicio y Turnos, que es lo que necesita para pedir y seguir su turno.
-// El personal de salud mantiene el menú de gestión completo.
+// El paciente NO ve Pacientes ni Médicos: son secciones de gestión que no le
+// corresponden. Ve Inicio, Turnos y sus propias Recetas, que es lo que necesita
+// para pedir y seguir su turno y consultar sus prescripciones.
 const ELEMENTOS_PACIENTE = [
   { texto: 'Inicio', icono: '🏠', pantalla: 'dashboard' },
   { texto: 'Turnos', icono: '📅', pantalla: 'turnos' },
+  { texto: 'Recetas', icono: '💊', pantalla: 'mis-recetas' },
 ];
 
-const ELEMENTOS_GESTION = [
+// Recetas es una pantalla clínica de uso exclusivo médico. El admin conserva
+// la gestión de pacientes y profesionales, pero no el listado de recetas.
+const ELEMENTOS_ADMIN = [
   { texto: 'Inicio', icono: '🏠', pantalla: 'dashboard' },
   { texto: 'Pacientes', icono: '👤', pantalla: 'pacientes' },
   { texto: 'Médicos', icono: '👨‍⚕️', pantalla: 'medicos' },
+];
+
+const ELEMENTOS_MEDICO = [
+  ...ELEMENTOS_ADMIN,
   { texto: 'Recetas', icono: '💊', pantalla: 'prescripciones' },
 ];
 
@@ -38,11 +44,14 @@ const ELEMENTOS_GESTION = [
 //  - cerrarSesion: función de logout (último acceso de la barra)
 export default function BottomNav({ pantalla, navegar, cerrarSesion }) {
   // El rol decide el conjunto de ítems. Si todavía no hay usuario (primer
-  // render), se usa el menú de gestión para no mostrar una barra vacía.
+  // render), se usa el menú administrativo para no mostrar una barra vacía.
   const { usuario } = useAuth();
-  const ELEMENTOS = usuario?.tipo_usuario === 'paciente'
+  const rol = usuario?.tipo_usuario;
+  const ELEMENTOS = rol === 'paciente'
     ? ELEMENTOS_PACIENTE
-    : ELEMENTOS_GESTION;
+    : rol === 'medico'
+      ? ELEMENTOS_MEDICO
+      : ELEMENTOS_ADMIN;
 
   return (
     // Contenedor horizontal con borde superior (se dibuja siempre sobre el contenido)

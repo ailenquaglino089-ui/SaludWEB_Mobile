@@ -8,8 +8,8 @@
 // La decisión de NO usar react-navigation es deliberada y conviene
 // entenderla antes de tocar este archivo:
 //
-//   - La app tiene 4 secciones de gestión (Inicio, Pacientes, Médicos,
-//     Recetas) más Turnos para pacientes, y una barra inferior fija. Con
+//   - La app tiene secciones de gestión (Inicio, Pacientes, Médicos y Recetas
+//     para médicos) más Turnos y Mis recetas para pacientes, y una barra inferior fija. Con
 //     react-navigation habría que declarar un navigator por tab, un
 //     stack anidado y configuración de transiciones, para navegación que en
 //     total son 5 pantallas y un useState.
@@ -44,14 +44,16 @@ import Dashboard from './src/screens/Dashboard';
 import Pacientes from './src/screens/Pacientes';
 import Medicos from './src/screens/Medicos';
 import Prescripciones from './src/screens/Prescripciones';
+import MisRecetas from './src/screens/MisRecetas';
 import Turnos from './src/screens/Turnos';
 
 // Componente raíz: decide qué pantalla mostrar según sesión y navegación.
 function ContenidoApp() {
   // Estado de la navegación: pantalla activa (dashboard por defecto).
   const [pantalla, setPantalla] = useState('dashboard');
-  // Estado de sesión (autenticado, cargando, desbloqueado, logout) desde el contexto.
-  const { autenticado, cargando, desbloqueado, logout } = useAuth();
+  // Estado de sesión (usuario, autenticado, cargando, desbloqueado, logout)
+  // desde el contexto.
+  const { usuario, autenticado, cargando, desbloqueado, logout } = useAuth();
 
    // Estos tres return temprano son deliberados y estan en este orden exacto.
   //
@@ -82,6 +84,17 @@ function ContenidoApp() {
 
   // Con sesión: devuelve la pantalla activa elegida en la barra inferior.
   const pantallaActiva = () => {
+    // Prescripciones es de uso exclusivo médico. La barra ya no ofrece la
+    // pestaña a otros roles; esta guarda cubre un estado de navegación viejo
+    // o un cambio de rol sin reiniciar la app.
+    if (pantalla === 'prescripciones' && usuario?.tipo_usuario !== 'medico') {
+      return <Dashboard />;
+    }
+
+    if (pantalla === 'mis-recetas' && usuario?.tipo_usuario !== 'paciente') {
+      return <Dashboard />;
+    }
+
     // Un switch y no un objeto de componentes: con un mapa de componentes
     // se importarían todos aunque solo se use uno, y el "default" dejaría
     // de ser un error visible para pasarse a otra sección.
@@ -92,6 +105,8 @@ function ContenidoApp() {
         return <Medicos />;           // Listado de médicos
       case 'prescripciones':
         return <Prescripciones />;    // Listado de prescripciones
+      case 'mis-recetas':
+        return <MisRecetas />;        // Recetas propias del paciente
       case 'turnos':
         return <Turnos />;            // Reserva y "Mis turnos" (paciente)
       default:

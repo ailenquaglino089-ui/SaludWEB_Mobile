@@ -100,8 +100,10 @@ export default function Dashboard() {
       <View style={styles.tarjeta}>
         <Text style={styles.texto}>
           {usuario?.tipo_usuario === 'paciente'
-            ? '📱 Usá la barra inferior para reservar y ver tus turnos, o para salir.'
-            : '📱 Usá la barra inferior para acceder a Pacientes, Médicos, Recetas y Salir.'}
+            ? '📱 Usá la barra inferior para reservar y ver tus turnos, consultar tus recetas, o para salir.'
+            : usuario?.tipo_usuario === 'medico'
+              ? '📱 Usá la barra inferior para acceder a Pacientes, Médicos, Recetas y Salir.'
+              : '📱 Usá la barra inferior para acceder a Pacientes, Médicos y Salir.'}
         </Text>
       </View>
     </View>

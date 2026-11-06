@@ -9,9 +9,10 @@ Guía del docente **"Adaptar el sistema a mobile: De escritorio a la palma de la
 aplicada y comentada **línea por línea** en `GUIA_MOBILE.md`.
 
 En esta entrega se sumaron el **registro desde el celular** (cada paciente elige
-su email y su contraseña), la pantalla **Turnos** con reserva paso a paso y
-"Mis turnos", y la documentación del **acceso por enlace** para abrir la versión
-web/PWA desde cualquier WiFi o con datos móviles, sin depender de Expo Go.
+su email y su contraseña), la pantalla **Turnos** con reserva paso a paso,
+"Mis turnos", la pantalla **Mis recetas** de solo lectura para el paciente y la
+documentación del **acceso por enlace** para abrir la versión web/PWA desde
+cualquier WiFi o con datos móviles, sin depender de Expo Go.
 
 ## Características
 
@@ -19,9 +20,9 @@ web/PWA desde cualquier WiFi o con datos móviles, sin depender de Expo Go.
   validación en tiempo real (onBlur) y autocompletado del sistema operativo.
 - ✅ **Registro desde el celular**: cada paciente crea su cuenta con Gmail/email y elige
   su propia contraseña; luego debe usar esa misma contraseña para volver a entrar.
-- ✅ **Bottom Navigation Bar** sticky (patrón de la guía): Inicio, Pacientes, Médicos,
-  Recetas y Salir para el personal de salud; Inicio, Turnos y Salir para el paciente.
-  Los ítems se filtran por rol, siempre visibles en la zona del pulgar.
+- ✅ **Bottom Navigation Bar** sticky (patrón de la guía): Inicio, Pacientes, Médicos y
+  Salir para el admin; el médico suma Recetas; el paciente ve Inicio, Turnos, Recetas y
+  Salir. Los ítems se filtran por rol, siempre visibles en la zona del pulgar.
 - ✅ **Turnera del paciente**: reserva en pasos internos (profesional → día → horario →
   confirmar) y pestaña "Mis turnos" para confirmar o cancelar. Si la cuenta todavía no
   está vinculada a una ficha, permite ingresar el DNI y vincularla en la misma pantalla.
@@ -35,8 +36,8 @@ web/PWA desde cualquier WiFi o con datos móviles, sin depender de Expo Go.
   `/api/auth/me`; toda la navegación se adapta a ese rol.
 - ✅ **Permisos por rol** (mismas reglas que el backend):
   - Pacientes y médicos: crear/editar/eliminar → **admin**.
-  - Prescripciones: crear/editar → **médico**; cambiar estado → **cualquier rol**;
-    eliminar → **admin**.
+  - Prescripciones: leer, crear, editar y cambiar estado → **médico**; eliminar → **admin**.
+  - Recetas propias del paciente: **solo lectura** en “Mis recetas”.
 - ✅ **Usabilidad**: targets táctiles de 44px+, tipografía de 16px y contraste WCAG AA.
 - ✅ **Rendimiento**: FlatList virtualizada, paginado y timeout de peticiones.
 - ✅ **Persistencia de sesión** con AsyncStorage (no se vuelve a pedir login al reabrir).
@@ -83,7 +84,7 @@ hecho**, se anota para dejar la decisión registrada:
   `ConfirmarModal.jsx` (confirmación de borrado) y `formularios/` (FormularioPaciente,
   FormularioMedico, FormularioPrescripcion).
 - `src/screens/` — Login, Bloqueo (candado biométrico), Dashboard, Pacientes, Medicos,
-  Prescripciones, Turnos (reserva + mis turnos) y `PagedList` (genérico).
+  Prescripciones, MisRecetas, Turnos (reserva + mis turnos) y `PagedList` (genérico).
 - `src/context/AuthContext.jsx` — Sesión (login/logout/loginSSO) persistida localmente
   + estado de bloqueo/desbloqueo biométrico.
 - `src/config.js` — URL de la API, constantes y credenciales de SSO (`SSO`).
@@ -457,9 +458,9 @@ incompleto.
 - Si la carga falla, deja `pacientes` vacío y muestra el error; no rompe el
   formulario.
 
-La misma API y las mismas reglas de rol se comparten con la web: un médico crea
-y edita prescripciones, un admin elimina y cualquier usuario autenticado puede
-cambiar el estado.
+La misma API y las mismas reglas de rol se comparten con la web: un médico lee,
+crea, edita y cambia el estado de prescripciones; un admin elimina; el paciente
+solo puede consultar sus propias recetas en “Mis recetas”.
 
 ### Nombre del médico en "Mis turnos"
 
@@ -505,6 +506,99 @@ Verificación ejecutada en esta iteración:
   separado.
 - No se agregaron datos de prueba en la base desde Mobile: los profesionales y la agenda
   los administra el backend con `sembrar_turnera_demo.php`.
+
+## Iteración 05/11/2026: Mis recetas y navegación clínica por rol
+
+Antes, la barra del paciente no ofrecía recetas y la barra de gestión mostraba “Recetas”
+tanto al admin como al médico. El backend ahora reserva la lectura clínica al médico y
+expone las recetas propias del paciente en `GET /api/prescripciones/paciente/{id_paciente}`.
+La app móvil agrega la pantalla **Mis recetas** y separa los menús de admin y médico.
+
+### Qué ve cada rol
+
+| Elemento | `admin` | `medico` | `paciente` |
+|---|---|---|---|
+| Ítem “Recetas” (listado clínico) | No | Sí | No |
+| Pantalla `prescripciones` | Vuelve a Dashboard | Sí | Vuelve a Dashboard |
+| Ítem “Recetas” (Mis recetas) | No | No | Sí |
+| Pantalla `mis-recetas` | Vuelve a Dashboard | Vuelve a Dashboard | Sí |
+
+La barra es una ayuda de navegación. La autorización definitiva la aplica la API: el
+backend responde `403` si el rol no corresponde, aunque se fuerce la pantalla.
+
+### `App.js`, línea por línea
+
+- **Línea 47** — Se importa `MisRecetas` desde `src/screens/MisRecetas`.
+- **Líneas 54-56** — `useAuth()` ahora también expone `usuario`; se necesita para leer
+  `tipo_usuario` y decidir la guarda de navegación.
+- **Líneas 85-96** — Antes del `switch`, dos guardas cubren estados viejos: si la pantalla es
+  `prescripciones` y el rol no es `medico`, devuelve `<Dashboard />`; si es `mis-recetas` y
+  el rol no es `paciente`, también vuelve a Dashboard. Sirven si quedó una pestaña anterior
+  seleccionada o si cambió el rol sin reiniciar la app.
+- **Línea 108** — El `switch` reconoce la pantalla `mis-recetas`.
+- **Línea 109** — Devuelve `<MisRecetas />`, la vista de solo lectura del paciente.
+- **Línea 107** — `prescripciones` sigue devolviendo el listado clínico que ya existía; ahora
+  solo se alcanza con rol médico por la guarda de las líneas 90-92.
+
+### `src/components/BottomNav.jsx`, línea por línea
+
+- **Líneas 22-26** — `ELEMENTOS_PACIENTE` pasa a tener Inicio, Turnos y Recetas. El destino de
+  Recetas es `mis-recetas`, no `prescripciones`.
+- **Líneas 28-34** — Se separa `ELEMENTOS_ADMIN`: Inicio, Pacientes y Médicos. El admin ya no
+  ve el listado clínico de recetas.
+- **Líneas 36-39** — `ELEMENTOS_MEDICO` reutiliza el menú administrativo con spread y agrega
+  Recetas apuntando a `prescripciones`.
+- **Líneas 49-54** — El rol decide el arreglo: `paciente` usa su menú, `medico` usa
+  `ELEMENTOS_MEDICO` y cualquier otro rol (incluido el primer render sin usuario) usa
+  `ELEMENTOS_ADMIN`, para no dibujar una barra vacía.
+
+### `src/screens/MisRecetas.jsx`, línea por línea
+
+- **Líneas 1-5** — Imports de React/hooks, componentes nativos (`ActivityIndicator`,
+  `FlatList`, `Text`, `View`), cliente `api`, contexto de sesión y estilos compartidos.
+- **Líneas 7-13** — `etiquetaEstado()` traduce los estados de la API a texto con símbolo:
+  `activa`, `vencida`, `dispensada`, `cancelada`; un estado desconocido se muestra tal cual.
+- **Líneas 15-21** — `colorEstado()` asigna un color por estado para que la tarjeta no
+  dependa solo del texto.
+- **Líneas 23-28** — El componente inicializa `idPaciente` con `usuario?.id_paciente`, el
+  array de recetas, el spinner y el mensaje de error.
+- **Líneas 30-36** — El `useEffect` activa una bandera `activo` para no actualizar estado
+  después de desmontar. Si no hay id en el contexto, pide `/auth/me` como respaldo; el
+  cliente `api()` agrega el prefijo `/api` y el token.
+- **Líneas 38-45** — Si la cuenta no tiene ficha, no llama al endpoint de recetas: limpia el
+  array y muestra “Tu cuenta todavía no está vinculada…”. Si el componente ya se desmontó,
+  no sigue.
+- **Líneas 47-48** — Guarda el id resuelto y llama a
+  `GET /api/prescripciones/paciente/{id}`. El paciente no elige el id: sale de su sesión.
+- **Líneas 50-53** — Solo acepta un array; si la API devuelve otra cosa, deja la lista vacía.
+  El error se limpia cuando la carga fue correcta.
+- **Líneas 54-58** — Cualquier fallo se muestra como mensaje (`err.message` o uno genérico) y
+  el `finally` apaga el spinner si el componente sigue montado.
+- **Línea 66** — La dependencia `[idPaciente]` vuelve a cargar si cambia la ficha vinculada.
+  Si el id se resolvió desde `/auth/me`, el cambio de `null` al id puede provocar una segunda
+  consulta; es el costo de mantener el id en estado para el reintento.
+- **Líneas 68-75** — Mientras carga, muestra `ActivityIndicator` y “Cargando recetas…”.
+- **Líneas 77-81** — Título “💊 Mis recetas” y mensaje de error, si existe.
+- **Líneas 83-103** — `FlatList` con clave por `id`; vacío muestra “No tenés recetas
+  registradas” salvo que haya error. Cada tarjeta une medicamentos como `Nombre (dosis)`,
+  muestra médico, fecha y estado con su color. No hay acciones de escritura.
+
+### `src/screens/Dashboard.jsx`, línea por línea
+
+- **Líneas 102-106** — El texto de ayuda cambia según el rol. El paciente ve la indicación de
+  reservar/ver turnos y consultar recetas; el médico ve Pacientes, Médicos y Recetas; el
+  admin ve solo Pacientes, Médicos y Salir. Se corrigió el texto anterior, que le prometía
+  “Recetas” al admin aunque su barra ya no la muestra.
+
+### Verificación ejecutada
+
+- `npm test`: **27/27** pruebas OK.
+- E2E por API del mismo flujo del backend: receta creada por médico `201`; paciente dueño
+  leyó `200`; otro paciente `403`; médico `200`; admin `403`; reserva `201`; conflicto de
+  slot `409`; limpieza `200`.
+- No se ejecutó una prueba visual en emulador o dispositivo físico en esta iteración. La
+  validación es la suite de tests, el contrato HTTP y la revisión de la navegación por rol.
+- Los datos de prueba se borraron y las secuencias se restauraron; no se crearon usuarios.
 
 ## Publicar cambios en GitHub (paso a paso)
 
