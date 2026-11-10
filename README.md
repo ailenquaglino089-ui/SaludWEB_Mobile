@@ -626,6 +626,62 @@ datos.
   suite de tests y la inspección del texto renderizado por la tarjeta.
 - No se modificaron la base de datos, el backend ni los permisos de recetas.
 
+## Iteración 10/11/2026: logo para Canva y revisión de la agenda médica
+
+Se creó el paquete de identidad visual de SaludWEB para usar en Canva y se copiaron los
+SVG a `docs/brand/`. El logo conserva los colores y la tipografía del proyecto, usa un
+isotipo con signo más médico y agrega la marca **SaludWEB PRO** en versión horizontal y
+cuadrada. No se modificó código de la app móvil; esta iteración es de documentación y
+assets.
+
+También se revisó la agenda del médico en Mobile. El backend permite consultar la agenda
+propia, pero la barra inferior y las pantallas actuales no ofrecen esa vista al médico.
+Queda registrado como deuda funcional.
+
+### `docs/brand/`, línea por línea
+
+- **`saludweb-logo-principal.svg`, líneas 1-3** — Declaración SVG, `viewBox` de 1000 × 400,
+  título y descripción accesibles. `role="img"` y `aria-labelledby` permiten anunciar el
+  logo como imagen con nombre.
+- **Líneas 4-13** — Degradados `bg` y `marca` con los colores `#5a6fd0` y `#764ba2`.
+- **Líneas 15-19** — Isotipo: recuadro redondeado con degradado y dos rectángulos blancos
+  que forman el signo más centrado.
+- **Líneas 22-27** — “Salud” en `#30364f`, “WEB” con degradado, píldora “PRO” y subtítulo
+  “SISTEMA DE GESTIÓN DE SALUD”.
+- **`saludweb-isotipo.svg`, líneas 10-12** — Fondo cuadrado redondeado y brazos blancos del
+  signo más. Es la versión sin texto para perfil, app o marca de agua.
+- **`saludweb-cuadrado-saludweb-pro.svg`, líneas 11-24** — Fondo degradado completo, signo
+  más centrado, “SaludWEB” blanco, píldora “PRO” y subtítulo. Es la versión 1:1.
+- **`saludweb-horizontal-gradiente.svg`, líneas 10-15** — Banner degradado con “SaludWEB”,
+  “PRO” y subtítulo, sin isotipo.
+- **`saludweb-horizontal-claro.svg`, líneas 4-8** — Texto `#5669c6` y píldora `#e0e7ff`
+  sobre fondo transparente para fondos claros.
+- **`saludweb-horizontal-blanco.svg`, líneas 4-8** — Todo en blanco para fondos oscuros o
+  fotografías, con la píldora translúcida.
+
+### Revisión de la agenda médica, línea por línea
+
+- **`src/components/BottomNav.jsx`, líneas 22-26** — El menú del paciente tiene Inicio,
+  Turnos y Recetas; Turnos es la pantalla de reserva y consulta del paciente.
+- **Líneas 30-34** — El menú del admin tiene Inicio, Pacientes y Médicos.
+- **Líneas 36-39** — El menú del médico reutiliza el menú administrativo y agrega Recetas.
+  No agrega una pantalla de agenda ni de turnos del profesional.
+- **`src/screens/Dashboard.jsx`, líneas 102-106** — El texto de ayuda del médico enumera
+  Pacientes, Médicos, Recetas y Salir; no promete una agenda.
+- **Conclusión** — El médico puede ver la agenda por API, pero en Mobile no existe una
+  pantalla que la consuma. Para cerrar la función falta una vista “Mi agenda” y su acceso
+  desde la barra o el Dashboard.
+
+### Verificación ejecutada
+
+- Los siete SVG se validaron como XML.
+- Los PNG se generaron desde los SVG con Chrome headless al doble de tamaño y fondo
+  transparente, salvo el banner degradado.
+- Se revisó el logo principal y el isotipo: el signo más está centrado y es blanco puro.
+- `npm test`: **27/27** pruebas OK.
+- No se ejecutó una prueba visual en emulador o dispositivo físico; la validación es la
+  suite, la revisión de la navegación por rol y los assets.
+
 ## Publicar cambios en GitHub (paso a paso)
 
 Este repositorio se publica en
