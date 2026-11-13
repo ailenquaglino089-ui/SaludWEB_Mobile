@@ -3,6 +3,24 @@
 App móvil de **SaludWEB** (Programación IV) construida con **React Native + Expo**.
 Consume la **misma API REST** que la SPA web (JWT, roles: admin / médico / paciente).
 
+## Relación con la iteración web 13/11/2026
+
+Esta iteración no modificó la app móvil. Los cambios se hicieron en la SPA web:
+
+- La HOME pública ahora replica el flyer de presentación y es accesible en `/` con o
+  sin sesión.
+- El Dashboard del médico muestra **Pacientes que reservaron** y se agregó
+  **Mi agenda** en `/turnera/mi-agenda`.
+
+La app móvil sigue consumiendo los mismos endpoints (`/api/auth`, `/api/turnos`,
+`/api/pacientes`, `/api/medicos`, `/api/prescripciones`). Por lo tanto, una reserva
+hecha desde el celular aparece igual en la agenda web del médico: las dos interfaces
+leen la misma fuente de verdad en el backend.
+
+Para la demo combinada alcanza con reservar desde mobile y mostrar el turno en la web
+con la cuenta del médico. El detalle de la parte web está en
+[`SaludWEB_Web/README.md`](https://github.com/ailenquaglino089-ui/SaludWEB_Web/blob/main/README.md).
+
 ## Estado del proyecto
 
 Guía del docente **"Adaptar el sistema a mobile: De escritorio a la palma de la mano"**
