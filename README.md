@@ -24,6 +24,18 @@ Para la demo combinada alcanza con reservar desde mobile y mostrar el turno en l
 con la cuenta del médico. El detalle de la parte web está en
 [`SaludWEB_Web/README.md`](https://github.com/ailenquaglino089-ui/SaludWEB_Web/blob/main/README.md).
 
+## Publicación de esta iteración
+
+- **PR #49** (`docs/access-connectivity` → `main`): documenta la iteración y el enlace
+  público. No cambia código de la app móvil.
+- El cambio funcional está en la SPA web, publicada por el **PR #68** de
+  `SaludWEB_Web`: HOME estilo flyer, agenda del médico, enlaces de vuelta y ajustes
+  visuales finales.
+- `main` está protegida: la publicación se hace por pull request, nunca con
+  `git push origin main`.
+- Demo pública: <https://saludweb.taileeeb72.ts.net/>. La app móvil sigue usando la
+  misma API y los mismos endpoints.
+
 ## Estado del proyecto
 
 Guía del docente **"Adaptar el sistema a mobile: De escritorio a la palma de la mano"**
