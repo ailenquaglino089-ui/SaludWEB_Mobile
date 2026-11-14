@@ -3,6 +3,39 @@
 App móvil de **SaludWEB** (Programación IV) construida con **React Native + Expo**.
 Consume la **misma API REST** que la SPA web (JWT, roles: admin / médico / paciente).
 
+## Relación con la iteración web 13/11/2026
+
+Esta iteración no modificó la app móvil. Los cambios se hicieron en la SPA web:
+
+- La HOME pública ahora replica el flyer de presentación y es accesible en `/` con o
+  sin sesión.
+- El Dashboard del médico muestra **Pacientes que reservaron** y se agregó
+  **Mi agenda** en `/turnera/mi-agenda`.
+- El enlace público para compartir es la raíz `https://saludweb.taileeeb72.ts.net/`, no
+  `/login` ni `/register`. Login y registro ahora incluyen **Volver al inicio** porque en
+  mobile el navbar se oculta en esas pantallas.
+
+La app móvil sigue consumiendo los mismos endpoints (`/api/auth`, `/api/turnos`,
+`/api/pacientes`, `/api/medicos`, `/api/prescripciones`). Por lo tanto, una reserva
+hecha desde el celular aparece igual en la agenda web del médico: las dos interfaces
+leen la misma fuente de verdad en el backend.
+
+Para la demo combinada alcanza con reservar desde mobile y mostrar el turno en la web
+con la cuenta del médico. El detalle de la parte web está en
+[`SaludWEB_Web/README.md`](https://github.com/ailenquaglino089-ui/SaludWEB_Web/blob/main/README.md).
+
+## Publicación de esta iteración
+
+- **PR #49** (`docs/access-connectivity` → `main`): documenta la iteración y el enlace
+  público. No cambia código de la app móvil.
+- El cambio funcional está en la SPA web, publicada por el **PR #68** de
+  `SaludWEB_Web`: HOME estilo flyer, agenda del médico, enlaces de vuelta y ajustes
+  visuales finales.
+- `main` está protegida: la publicación se hace por pull request, nunca con
+  `git push origin main`.
+- Demo pública: <https://saludweb.taileeeb72.ts.net/>. La app móvil sigue usando la
+  misma API y los mismos endpoints.
+
 ## Estado del proyecto
 
 Guía del docente **"Adaptar el sistema a mobile: De escritorio a la palma de la mano"**
@@ -130,7 +163,7 @@ ni instalar un APK:
    exacta aparece al ejecutar `SaludWEB_Web\scripts\iniciar_saludweb.bat`; por ejemplo,
    `http://192.168.1.4:5173`. Este acceso local suele ser el más rápido.
 2. **Desde otra Wi‑Fi o con datos móviles:** abrir
-   <https://desktop-5f7743f.taileeeb72.ts.net>. La PC debe permanecer encendida,
+   <https://saludweb.taileeeb72.ts.net/>. La PC debe permanecer encendida,
    conectada a Internet, con SaludWEB iniciado y Tailscale activo.
    El enlace abre la **versión web adaptable**, no la app nativa de Expo. El lanzador web
    compila la SPA, mantiene el Backend y sirve ambos por el mismo origen HTTPS: Tailscale
@@ -141,7 +174,10 @@ ni instalar un APK:
 3. En Android se puede usar Chrome → **Agregar a pantalla de inicio**; en iPhone,
    Safari → **Compartir → Agregar a pantalla de inicio**. Es un acceso a la web, no una
    instalación nativa. Si se había instalado antes, cerrarla y volver a abrir el enlace
-   actualiza los archivos web.
+   actualiza los archivos web. **Compartí la raíz** (`https://saludweb.taileeeb72.ts.net/`),
+   no un enlace a `/login` o `/register`: esos enlaces abren el formulario y no muestran
+   la HOME. Si el teléfono sigue mostrando una versión vieja, quitá el acceso instalado
+   y volvé a agregarlo, o borrá los datos del sitio en el navegador.
 4. En **Crear cuenta**, cada persona se registra por su cuenta: no necesita que la
    administradora le cree el usuario ni usar la cuenta de ella. Ingresa nombre, email
    (puede ser Gmail) y la contraseña que eligió. El registro móvil crea una cuenta normal
